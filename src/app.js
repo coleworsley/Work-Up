@@ -34,4 +34,4 @@ app.get('/*', function (req, res) { res.sendFile(path.join(__dirname, '/../index
 
 app.listen(port);
 
-console.log(`Listening at http://localhost:${port}`);
+console.log(`Server listening at http://localhost:${port}`);

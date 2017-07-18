@@ -4,6 +4,7 @@ import { render } from 'react-dom'
 class Root extends Component {
   componentDidMount() {
     // INSERT API CALL TO YOUR INTERNAL API
+    // fetch()
   }
 
   render() {
