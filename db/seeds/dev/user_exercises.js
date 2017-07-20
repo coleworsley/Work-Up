@@ -1,7 +1,7 @@
 const userInputs = [
   {
     user_id: 10,
-    exercise_id: 2
+    exercise_id: 14
   },
 ]
 

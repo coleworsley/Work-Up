@@ -21,19 +21,10 @@ function postUsers(req, res) {
 }
 
 function postWorkout(req, res) {
-  // Promise.all([
-  //   db('users').select(req.user_id)
-  //
-  // ])
-  // db('users').select(req.user_id)
-  //   .then(ret => res.status(200).json({ ret }))
-  //   .catch(err => res.status(500).json({ err }))
-
-
-    db('user_workouts').insert(req.body, '*')
-    .then(workout => res.status(200).json({ data: workout }))
-    .catch(err => res.status(500).json({ err }))
-  // where('id', req.body.user_id)
+    db('user_exercises').insert(req.body, '*')
+    .then(workout => {
+      return res.status(200).json({ data: workout })})
+    .catch(err => res.status(500).json({ err, body: req.body }))
 }
 
 
