@@ -35,3 +35,27 @@ export const userSignUpSuccess = (user) => {
     user,
   }
 }
+
+export const fetchUserLogin = (body) => {
+  return (dispatch) => {
+    console.log(body)
+    dispatch(userLoading(true))
+
+    fetch('api/v1/login', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => {
+      dispatch(userLoading(false))
+      return res;
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+      dispatch(userSignUpSuccess(data))})
+    .catch(err => console.log(err))
+  }
+}

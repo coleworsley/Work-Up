@@ -6,7 +6,7 @@ function login(req, res) {
   db('users').where(req.body).select('id', 'email', 'first_name', 'last_name')
     .then(user => {
       if (user.length) {
-        res.status(200).json(user);
+        res.status(200).json(user[0]);
       } else {
         res.status(404).json({ error: 'email and or password not found'})
       }
@@ -20,7 +20,7 @@ function signup(req, res) {
   const user = req.body
 
   db('users').insert(user, ['id', 'email', 'first_name', 'last_name'])
-    .then(user => res.status(200).json({ user: user[0] }))
+    .then(user => res.status(200).json(user[0]))
     .catch(err => res.status(500).json({ error }))
 }
 

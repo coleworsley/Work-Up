@@ -35,11 +35,16 @@ export default class Login extends Component {
   }
 
   handleSubmit() {
-    const { fetchUserSignUp } = this.props;
-    const { signup } = this.state
-    fetchUserSignUp(signup);
+    const { fetchUserSignUp, fetchUserLogin } = this.props;
+    const { status, signup, login } = this.state
 
-    this.setState({ initialState });
+    if (status === 'login') {
+      fetchUserLogin(login)
+    } else {
+      fetchUserSignUp(signup);
+    }
+
+    this.setState( initialState );
   }
 
   handleChange(e, field) {
@@ -48,19 +53,19 @@ export default class Login extends Component {
     this.setState({ [status]: newState })
   }
 
-  createInput(field) {
+  createInput(field, status) {
     return <input
               key={field}
               type={this.assignType(field)}
               name={field}
               placeholder={field}
-              value={this.state[field]}
+              value={this.state[status][field]}
               onChange={(e) => this.handleChange(e, field)}
             />
   }
 
   buildInputs(status) {
-    return Object.keys(this.state[status]).map(key => this.createInput(key));
+    return Object.keys(this.state[status]).map(key => this.createInput(key, status));
   }
 
   switchStatus() {
@@ -81,6 +86,7 @@ export default class Login extends Component {
 
     return (
       <main className='login-container'>
+
         <h1 className='login-title title'>Work
           <span className='login-title-span title-span'>Up</span>
         </h1>

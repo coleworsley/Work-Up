@@ -10,7 +10,7 @@ export const userReducer = (state={}, action) => {
 export const userLoading = (state=false, action) => {
   switch (action.type) {
     case 'USER_IS_LOADING':
-      return action.type;
+      return action.userLoading;
     default:
       return state;
   }
