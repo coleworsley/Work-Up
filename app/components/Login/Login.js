@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { SignUp } from '../SignUp/SignUp'
 
 const initialState = {
   status: 'login',

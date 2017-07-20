@@ -5,14 +5,13 @@ import { fetchUserSignUp } from '../actions'
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    all: state,
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetchUserSignUp: (body) => dispatch(fetchUserSignUp(body))
-  }
-}
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     fetchUserSignUp: (body) => dispatch(fetchUserSignUp(body))
+//   }
+// }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, null)(App);

@@ -1,6 +1,5 @@
 export const fetchUserSignUp = (body) => {
   return (dispatch) => {
-    console.log(body)
     dispatch(userLoading(true))
 
     fetch('api/v1/signup', {
@@ -15,8 +14,7 @@ export const fetchUserSignUp = (body) => {
       return res;
     })
     .then(res => res.json())
-    .then(({user}) => {
-      console.log(user)
+    .then(user => {
       dispatch(userSignUpSuccess(user))})
     .catch(err => console.log(err))
   }
@@ -54,7 +52,6 @@ export const fetchUserLogin = (body) => {
     })
     .then(res => res.json())
     .then(data => {
-      console.log(data)
       dispatch(userSignUpSuccess(data))})
     .catch(err => console.log(err))
   }
