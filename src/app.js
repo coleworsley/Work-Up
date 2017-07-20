@@ -8,8 +8,8 @@ const app = express();
 const router = require('./router');
 
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 if (process.env.NODE_ENV !== 'production') {
   const webpack = require('webpack');
@@ -29,9 +29,8 @@ app.use('/assets', express.static(path.join(__dirname, '../app/assets')));
 
 app.get('/', function (req, res) { res.sendFile(path.join(__dirname, '/../index.html')) });
 
-app.use('/api', router);
+app.use('/api/v1', router);
 app.get('/*', function (req, res) { res.sendFile(path.join(__dirname, '/../index.html')) });
 
 app.listen(port);
-
 console.log(`Server listening at http://localhost:${port}`);
