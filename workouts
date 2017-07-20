@@ -1,0 +1,89 @@
+\q
+\h
+\q
+CREATE DATABASE publications
+\q
+\?
+\p
+]q
+\q
+CREATE DATABASE publications;
+\q
+CREATE DATABASE workouts;
+\q
+\l
+\dt
+\connect workouts
+\dt
+\q
+\?
+\d
+\g
+terminate;
+\?
+\l
+\connect workouts
+\dt
+\q
+\q
+\l
+\connect workouts
+\dt
+\d users
+SELECT * FROM users;
+\q
+\l
+\connect users
+\dt
+\?
+\r
+\?
+\? options
+\q
+\l
+\connect workouts
+\l
+\dt
+\d users
+SELECT * FROM users;
+\q
+\l
+\connect publications
+\dt
+SELECT * FROM footnotes
+SELECT * FROM footnotes;
+SELECT * FROM papers;
+\q
+\l
+\connect users
+\connect workouts
+\dt
+\d users
+SELECT * FROM users;
+\q
+\l
+\c users
+\dt
+\q
+\l
+\l
+\l
+\c workouts
+\dt
+\dt
+\q
+\l
+\l
+\c workouts
+\dt
+\l
+\dt
+SELECT * FROM user;
+SELECT * FROM user;
+SELECT * FROM user;
+\q
+\s workouts
+SELECT * FROM user;
+SELECT * FROM users;
+\l
+\s workouts

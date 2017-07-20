@@ -2,21 +2,13 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const db = require('knex')(configuration);
 
-// function getUsers(req, res, next) {
-//   request('api/users/', function (error, response, body) {
-//     if (!error && response.statusCode == 200) {
-//       res.send(body)
-//     }
-//   })
-// }
-
 function getUsers(req, res) {
   db('users').select()
     .then((users) => {
       res.status(200).json(users);
     })
-    .catch((error) => {
-      response.status(500).json({ error })
+    .catch((err) => {
+      response.status(500).json({ err })
     })
 }
 
@@ -28,8 +20,25 @@ function postUsers(req, res) {
     .catch(err => res.status(500).json({ error }))
 }
 
+function postWorkout(req, res) {
+  // Promise.all([
+  //   db('users').select(req.user_id)
+  //
+  // ])
+  // db('users').select(req.user_id)
+  //   .then(ret => res.status(200).json({ ret }))
+  //   .catch(err => res.status(500).json({ err }))
+
+
+    db('user_workouts').insert(req.body, '*')
+    .then(workout => res.status(200).json({ data: workout }))
+    .catch(err => res.status(500).json({ err }))
+  // where('id', req.body.user_id)
+}
+
 
 module.exports = {
   getUsers: getUsers,
-  postUsers: postUsers
+  postUsers: postUsers,
+  postWorkout: postWorkout
 };
