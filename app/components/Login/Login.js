@@ -18,8 +18,9 @@ const initialState = {
 export default class Login extends Component {
   constructor() {
     super();
-    this.state = { initialState }
+    this.state = initialState;
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.switchStatus = this.switchStatus.bind(this);
   }
 
   assignType(field) {
@@ -42,13 +43,14 @@ export default class Login extends Component {
   }
 
   handleChange(e, field) {
-    const { signup } = this.state;
-    const newState = Object.assign({}, signup, {[field]: e.target.value})
-    this.setState({ signup: newState })
+    const { status } = this.state;
+    const newState = Object.assign({}, this.state[status], {[field]: e.target.value})
+    this.setState({ [status]: newState })
   }
 
   createInput(field) {
     return <input
+              key={field}
               type={this.assignType(field)}
               name={field}
               placeholder={field}
@@ -58,10 +60,25 @@ export default class Login extends Component {
   }
 
   buildInputs(status) {
-    
+    return Object.keys(this.state[status]).map(key => this.createInput(key));
+  }
+
+  switchStatus() {
+    const { status } = this.state
+    const newStatus = status === 'login' ? 'signup' : 'login';
+    this.setState({
+      status: newStatus,
+      [status]: initialState[status]
+    });
+  }
+
+  buttonText(status) {
+    return status === 'login' ? 'Create An Account' : 'Have an Account?'
   }
 
   render() {
+    const { status } = this.state;
+
     return (
       <main className='login-container'>
         <h1 className='login-title title'>Work
@@ -69,16 +86,19 @@ export default class Login extends Component {
         </h1>
 
         <section className="login-card">
-
-
+          <h3>{ status }</h3>
+          { this.buildInputs(status) }
+          <button onClick={ this.handleSubmit }>Submit</button>
         </section>
-        <h3>Login</h3>
-        {this.createInput('first_name')}
-        {this.createInput('last_name')}
-        {this.createInput('email')}
-        {this.createInput('password')}
 
-        <button onClick={this.handleSubmit}>Submit</button>
+        <div className='login-links'>
+          <button
+            className='login-toggle-btn'
+            onClick={ this.switchStatus }>
+            { this.buttonText(status) }
+          </button>
+        </div>
+
       </main>
     )
   }
