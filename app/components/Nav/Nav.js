@@ -12,7 +12,12 @@ export default class Nav extends Component {
   render() {
     return (
       <header className='nav-bar'>
-        <h1 className='nav-title'>Work <span className='nav-title-span'>Up</span></h1>
+        <h1 className='nav-title title'>
+          Work
+          <span className='nav-title-span title-span'>
+            Up
+          </span>
+        </h1>
         <div className='nab-link-container'>
           <button className='nav-link'>Dashboard</button>
           <button className='nav-link'>Workouts</button>

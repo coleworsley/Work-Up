@@ -2,21 +2,25 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const db = require('knex')(configuration);
 
-function getUsers(req, res) {
-  db('users').select()
-    .then((users) => {
-      res.status(200).json(users);
+function login(req, res) {
+  db('users').where(req.body).select('id', 'email', 'first_name', 'last_name')
+    .then(user => {
+      if (user.length) {
+        res.status(200).json(user);
+      } else {
+        res.status(404).json({ error: 'email and or password not found'})
+      }
     })
     .catch((err) => {
       response.status(500).json({ err })
     })
 }
 
-function postUsers(req, res) {
+function signup(req, res) {
   const user = req.body
 
-  db('users').insert(user, '*')
-    .then(user => res.status(200).json({ data: user }))
+  db('users').insert(user, ['id', 'email', 'first_name', 'last_name'])
+    .then(user => res.status(200).json({ user: user[0] }))
     .catch(err => res.status(500).json({ error }))
 }
 
@@ -29,7 +33,7 @@ function postWorkout(req, res) {
 
 
 module.exports = {
-  getUsers: getUsers,
-  postUsers: postUsers,
-  postWorkout: postWorkout
+  login,
+  signup,
+  postWorkout,
 };

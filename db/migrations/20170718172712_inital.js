@@ -5,14 +5,14 @@ exports.up = function(knex, Promise) {
       table.increments('id').primary();
       table.string('first_name');
       table.string('last_name');
-      table.string('email');
+      table.string('email').unique();
       table.string('password');
       table.timestamps(true, true);
     }),
 
     knex.schema.createTable('exercises', function(table) {
       table.increments('id').primary();
-      table.string('exercise_name');
+      table.string('exercise_name').unique();
       table.string('exercise_description');
       table.timestamps(true, true);
     }),
