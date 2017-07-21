@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-// import './Nav.css';
+import './Nav.css';
+// require("./Nav.css");
 
 export default class Nav extends Component {
   constructor() {
@@ -10,6 +11,7 @@ export default class Nav extends Component {
   }
 
   render() {
+    const { user: { first_name }, user: { last_name } } = this.props
     return (
       <header className='nav-bar'>
         <h1 className='nav-title title'>
@@ -23,7 +25,7 @@ export default class Nav extends Component {
           <button className='nav-link'>Workouts</button>
           <button className='nav-link'>Exercises</button>
         </div>
-        <h1 className='nav-username'>Cole Worsley</h1>
+        <h1 className='nav-username'>Welcome: { first_name }</h1>
       </header>
     )
   }

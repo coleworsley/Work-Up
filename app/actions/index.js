@@ -34,6 +34,13 @@ export const userSignUpSuccess = (user) => {
   }
 }
 
+// export const userFail = (user) => {
+//   return {
+//     type: 'USER_SUCCESS',
+//     user,
+//   }
+// }
+
 export const fetchUserLogin = (body) => {
   return (dispatch) => {
     console.log(body)

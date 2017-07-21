@@ -80,6 +80,12 @@ export default class Login extends Component {
     return status === 'login' ? 'Create An Account' : 'Have an Account?'
   }
 
+  componentWillReceiveProps(np) {
+    if(Object.keys(np.user).length > 0) {
+      np.history.push('/dashboard')
+    }
+  }
+
   render() {
     const { status } = this.state;
 

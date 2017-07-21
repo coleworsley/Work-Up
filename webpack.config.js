@@ -13,7 +13,9 @@ module.exports = {
      publicPath: '/'
    },
    module: {
-     loaders: [{
+     loaders: [
+     { test: /\.css$/, loader: "style-loader!css-loader" },
+     {
        test: /.jsx?$/,
        loader: 'babel-loader',
        include: path.join(__dirname, 'app'),
