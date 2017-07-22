@@ -5,7 +5,9 @@ exports.seed = (knex, Promise) => {
     [
       knex('user_exercises').del(),
       knex('exercises').del(),
-      knex('users').del()
+      knex('users').del(),
+      knex('workouts').del(),
+      knex('workouts_exercises').del()
     ])
     .then((promiseArr) => {
       const userTable = promiseArr[2]
@@ -21,7 +23,7 @@ exports.seed = (knex, Promise) => {
       mockData.exerciseData.forEach(exercise => {
         exercisePromises.push(mockData.createExercise(knex, exercise));
       });
-      
+
       mockData.userData.forEach(user => {
         userPromises.push(mockData.createUser(knex, user));
       });

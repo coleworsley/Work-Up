@@ -39,6 +39,18 @@ const savedExerciseData = [
   },
 ]
 
+const workoutData = [
+  {
+    title: 'ARM DAY',
+    description: 'do some are workouts!',
+    user_id: 1,
+    popularity: 1,
+  }
+
+]
+
+
+
 const createExercise = (knex, exercise) => {
   return knex('exercises').insert({
     exercise_name: exercise.exercise_name,
