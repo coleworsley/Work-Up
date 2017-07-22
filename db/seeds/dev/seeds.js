@@ -7,7 +7,7 @@ exports.seed = (knex, Promise) => {
       knex('exercises').del(),
       knex('users').del(),
       knex('workouts').del(),
-      knex('workouts_exercises').del()
+      knex('workout_exercises').del()
     ])
     .then((promiseArr) => {
       const userTable = promiseArr[2]
