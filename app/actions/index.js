@@ -15,7 +15,14 @@ export const fetchUserSignUp = (body) => {
     })
     .then(res => res.json())
     .then(user => {
-      dispatch(userSignUpSuccess(user))})
+      if (user.err) {
+        console.log('error')
+        dispatch(userLogInFail(user.err))
+      } else {
+        console.log('success')
+        dispatch(userLogInSuccess(user))
+      }
+    })
     .catch(err => console.log(err))
   }
 }
@@ -27,19 +34,19 @@ export const userLoading = (bool) => {
   }
 }
 
-export const userSignUpSuccess = (user) => {
+export const userLogInSuccess = (user) => {
   return {
     type: 'USER_SUCCESS',
     user,
   }
 }
 
-// export const userFail = (user) => {
-//   return {
-//     type: 'USER_SUCCESS',
-//     user,
-//   }
-// }
+export const userLogInFail = (error) => {
+  return {
+    type: 'USER_FAIL',
+    error,
+  }
+}
 
 export const fetchUserLogin = (body) => {
   return (dispatch) => {
@@ -58,8 +65,13 @@ export const fetchUserLogin = (body) => {
       return res;
     })
     .then(res => res.json())
-    .then(data => {
-      dispatch(userSignUpSuccess(data))})
-    .catch(err => console.log(err))
+    .then(user => {
+      if (user.error) {
+        dispatch(userLogInFail(user))
+      } else {
+        dispatch(userLogInSuccess(user))
+      }
+    })
+    .catch(err => dispatch(userLogInFail('something went wrong ahhHHHHHHH!H!H!H!H!HH!!!!!')))
   }
 }

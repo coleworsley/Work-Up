@@ -5,6 +5,7 @@ import { fetchUserSignUp, fetchUserLogin } from '../actions'
 const mapStateToProps = (state) => {
   return {
     user: state.user,
+    loading: state.userLoading
   }
 }
 

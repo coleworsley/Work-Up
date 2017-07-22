@@ -1,8 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import { Route, Redirect } from 'react-router-dom';
+
 import NavContainer from '../../containers/NavContainer';
 import LoginContainer from '../../containers/LoginContainer';
+
 import Dashboard from '../Dashboard/Dashboard';
-import { Route, Redirect } from 'react-router-dom'
+import WorkoutTab from '../WorkoutTab/WorkoutTab';
 
 
 export default class App extends Component {
@@ -12,14 +15,15 @@ export default class App extends Component {
     return (
       <div>
         <Route path='/' render={(props) => {
-          if(Object.keys(user).length <= 0) {
+          if(!user.id) {
             return <Redirect to='/login' />
           }
           return <NavContainer {...props} />
         }}/>
 
         <Route exact path='/login' component={LoginContainer}/>
-        <Route path='/dashboard' component={Dashboard} />
+        <Route path='/workouts' component={WorkoutTab} />
+        {/* <Route path='/dashboard' component={Dashboard} /> */}
 
       </div>
 

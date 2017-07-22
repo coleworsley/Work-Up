@@ -2,6 +2,8 @@ export const userReducer = (state={}, action) => {
   switch (action.type) {
     case 'USER_SUCCESS':
       return action.user;
+    case 'USER_FAIL':
+      return action.error
     default:
       return state;
   }

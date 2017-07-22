@@ -11,7 +11,8 @@ const initialState = {
   login: {
     email: '',
     password: '',
-  }
+  },
+  error: '',
 }
 
 export default class Login extends Component {
@@ -72,7 +73,8 @@ export default class Login extends Component {
     const newStatus = status === 'login' ? 'signup' : 'login';
     this.setState({
       status: newStatus,
-      [status]: initialState[status]
+      [status]: initialState[status],
+      error: '',
     });
   }
 
@@ -81,13 +83,14 @@ export default class Login extends Component {
   }
 
   componentWillReceiveProps(np) {
-    if(Object.keys(np.user).length > 0) {
-      np.history.push('/dashboard')
-    }
+    const error = np.user.error ? np.user.error : '';
+    // TODO: change workouts to dashboard when complete
+    if(np.user.id) np.history.push('/workouts')
+    this.setState({ error })
   }
 
   render() {
-    const { status } = this.state;
+    const { status, error } = this.state;
 
     return (
       <main className='login-container'>
@@ -100,6 +103,7 @@ export default class Login extends Component {
           <h3>{ status }</h3>
           { this.buildInputs(status) }
           <button onClick={ this.handleSubmit }>Submit</button>
+          <p className='login-error-text'>{error}</p>
         </section>
 
         <div className='login-links'>

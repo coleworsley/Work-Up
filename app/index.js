@@ -13,7 +13,7 @@ import AppContainer from './containers/AppContainer';
 ReactDOM.render(
   <Provider store={store} >
     <ConnectedRouter history={history}>
-      <Route to='/' component={AppContainer}/>
+      <Route path='/' component={AppContainer}/>
     </ConnectedRouter>
   </Provider>,
   document.getElementById('main')
