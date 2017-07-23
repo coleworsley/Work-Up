@@ -56,6 +56,7 @@ export default class Login extends Component {
 
   createInput(field, status) {
     return <input
+              className='login-input'
               key={field}
               type={this.assignType(field)}
               name={field}
@@ -100,10 +101,12 @@ export default class Login extends Component {
           <span className='login-title-span title-span'>Up</span>
         </h1>
 
-        <section className="login-card">
-          <h3>{ status }</h3>
+        <section className='login-card'>
+          <h3 className='login-status'>{ status }</h3>
           { this.buildInputs(status) }
-          <button onClick={ this.handleSubmit }>Submit</button>
+          <button
+            className='login-btn'
+            onClick={ this.handleSubmit }>Submit</button>
           <p className='login-error-text'>{error}</p>
         </section>
 

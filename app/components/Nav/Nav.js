@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './Nav.css';
+import { Link } from 'react-router-dom';
 // require("./Nav.css");
 
 export default class Nav extends Component {
@@ -21,9 +22,9 @@ export default class Nav extends Component {
           </span>
         </h1>
         <div className='nav-link-container'>
-          <button className='nav-link'>Dashboard</button>
-          <button className='nav-link'>Workouts</button>
-          <button className='nav-link'>Exercises</button>
+          <Link to='/dashboard' className='nav-link'>Dashboard</Link>
+          <Link to='/workouts' className='nav-link'>Workouts</Link>
+          <Link to='/exercises' className='nav-link'>Exercises</Link>
         </div>
         <h3 className='nav-username'>Welcome: { first_name }</h3>
       </header>
