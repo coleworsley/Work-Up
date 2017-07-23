@@ -79,12 +79,39 @@ function createWorkoutPromises(req) {
 
 function addWorkout(req, res) {
   createWorkoutPromises(req)
-    .then(data => res.status(200).json({ sucess: true, data }))
+    .then(data => res.status(200).json({ success: true, data }))
     .catch(error => res.status(500).json({ error: error }))
+}
+
+
+function saveExercise(req, res) {
+  const promises = req.body.map(exercise => {
+    return db('exercises')
+      .where('exercise_name', exercise.exercise_name )
+      .select('*')
+      .then(response => {
+        console.log(response)
+        if (!response.length) {
+          return db('exercises').insert(Object.assign(exercise, { count: 1 }), '*')
+          .then(() => `${exercise.exercise_name} was inserted`)
+        } else {
+          return db('exercises').where('exercise_name', exercise.exercise_name).update({
+            count: db.raw('count + 1'),
+            popularity: db.raw('popularity + ?', [exercise.popularity])
+          })
+          .then(() => `${exercise.exercise_name} was updated`)
+        }
+      })
+    })
+
+  Promise.all(promises)
+    .then(data => res.status(200).json({ data }))
+    .catch(error => res.status(500).json({ error }))
 }
 
 module.exports = {
   login,
   signup,
   addWorkout,
+  saveExercise,
 };

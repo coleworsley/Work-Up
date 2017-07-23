@@ -9,7 +9,7 @@ export default class WorkoutTab extends Component {
   }
 
   componentDidMount(){
-    fetch('https://wger.de/api/v2/exercise/?format=json&language=2&limit=500')
+    fetch('https://wger.de/api/v2/exercise/?format=json&language=2&limit=256')
       .then(res => res.json())
       .then(data => this.setState({ data: data.results }))
   }
@@ -32,7 +32,7 @@ export default class WorkoutTab extends Component {
         </section>
         <section className='workout-popular'>
           <h1>Popular Workouts</h1>
-          i
+
         </section>
       </main>
     )
