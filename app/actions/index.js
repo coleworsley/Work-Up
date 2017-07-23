@@ -72,6 +72,43 @@ export const fetchUserLogin = (body) => {
         dispatch(userLogInSuccess(user))
       }
     })
-    .catch(err => dispatch(userLogInFail('something went wrong ahhHHHHHHH!H!H!H!H!HH!!!!!')))
+    .catch(err => dispatch(userLogInFail(err)))
+  }
+}
+
+export const fetchAPIExercises = (body) => {
+  return (dispatch) => {
+    dispatch(pageLoading(true))
+
+    fetch('https://wger.de/api/v2/exercise/?format=json&language=2&license_author=wger.de&limit=66')
+    .then(res => {
+      dispatch(pageLoading(false))
+      return res
+    })
+    .then(res => res.json())
+    .then(exercises => dispatch(pageDataRetrieved(exercises.results)))
+    .catch(error => pageDataFailed(error))
+  }
+}
+
+
+export const pageLoading = (bool) => {
+  return {
+    type: 'PAGE_IS_LOADING',
+    userLoading: bool,
+  }
+}
+
+export const pageDataRetrieved = (data) => {
+  return {
+    type: 'PAGE_FETCH_SUCCESS',
+    data,
+  }
+}
+
+export const pageDataFailed = (error) => {
+  return {
+    type: 'PAGE_FETCH_FAIL',
+    error,
   }
 }

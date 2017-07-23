@@ -8,14 +8,20 @@
   background: url('/assets/images/gym.jpg');
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
 }
 
 .login-title {
   margin-bottom: 20px;
   font-size: 40px;
   color: #fff;
-  text-shadow: 1px 1px 1px #000, 3px 3px 5px blue;
+  text-shadow: 3px 3px 5px #9f9f9f;
 }
+
+.login-title-span {
+  text-shadow: 3px 3px 5px #2a389c;
+}
+
 
 .login-card {
   display: flex;
@@ -38,21 +44,35 @@
 
 .login-input {
   font-size: 20px;
-  padding: 4px 6px;
-  background: #fff;
-  border-radius: 5px;
+  border-bottom: solid 2px #777877;
+  min-width: 300px;
 }
 
-.login-btn {
+.login-input:focus {
+  border-color: #136EF6;
+}
+
+.login-submit-btn {
   font-size: 18px;
   color: #fff;
   background-color: #136EF6;
+  opacity: 80%;
   padding: 5px;
   border-radius: 10px;
+  box-shadow: 0 10px 6px -6px #000229;
+  transition:all 0.8s, color 0.3s 0.3s;
+  box-shadow:
+}
+
+.login-submit-btn:hover {
+  box-shadow: 0 10px 6px -6px #181818, 0 0 0 10px #043d93 inset, 0 0 0 150px rgba(1, 13, 77, 0.5) inset;
+  opacity: 100%;
+  transform: scale(1.05);
 }
 
 .login-toggle-btn {
   color: #136EF6;
   text-decoration: underline;
+  text-shadow: 3px 3px 5px #000000;
   font-size: 16px;
 }

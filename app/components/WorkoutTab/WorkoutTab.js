@@ -9,13 +9,23 @@ export default class WorkoutTab extends Component {
   }
 
   componentDidMount(){
-    fetch('https://wger.de/api/v2/exercise/?format=json&language=2&limit=20')
+    if (!(this.state.data.length > 0)) {
+      fetch('https://wger.de/api/v2/exercise/?format=json&language=2&limit=20')
       .then(res => res.json())
-      .then(data => this.setState({ data: data.results }))
+      .then(data => {
+        console.log(data)
+        this.setState({ data: data.results })
+      })
+    }
   }
 
   buildExercises() {
-    return this.state.data.map(e => <p>{e.name}</p>)
+    return this.state.data.map(e => (
+      <div>
+        <p>{e.name}</p>
+        {/* <p>{e.description}</p> */}
+      </div>
+    ))
   }
 
 

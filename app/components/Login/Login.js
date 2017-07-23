@@ -105,7 +105,7 @@ export default class Login extends Component {
           <h3 className='login-status'>{ status }</h3>
           { this.buildInputs(status) }
           <button
-            className='login-btn'
+            className='login-submit-btn'
             onClick={ this.handleSubmit }>Submit</button>
           <p className='login-error-text'>{error}</p>
         </section>
