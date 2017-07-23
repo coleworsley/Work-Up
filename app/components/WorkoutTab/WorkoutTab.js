@@ -9,7 +9,7 @@ export default class WorkoutTab extends Component {
   }
 
   componentDidMount(){
-    fetch('https://wger.de/api/v2/exercise/?format=json&language=2&limit=256')
+    fetch('https://wger.de/api/v2/exercise/?format=json&language=2&limit=20')
       .then(res => res.json())
       .then(data => this.setState({ data: data.results }))
   }

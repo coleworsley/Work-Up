@@ -11,17 +11,21 @@ import WorkoutTab from '../WorkoutTab/WorkoutTab';
 export default class App extends Component {
   render() {
     const { user } = this.props;
+    // const user = {
+    //   id: 1,
+    //   first_name: 'Batman',
+    //   last_name: 'Batman',
+    //   email: 'Bruce@Wayne.org',
+    // }
 
     return (
       <div>
-        <Route path='/' render={(props) => {
-          if(!user.id) {
-            return <Redirect to='/login' />
-          }
-          return <NavContainer {...props} />
-        }}/>
+        <Route path='/' render={(props) => !user.id
+          ? <Redirect to='/login' />
+          : <NavContainer {...props} />}
+        />
 
-        <Route exact path='/login' component={LoginContainer}/>
+        <Route exact path='/login' component={LoginContainer} />
         <Route path='/workouts' component={WorkoutTab} />
         {/* <Route path='/dashboard' component={Dashboard} /> */}
 

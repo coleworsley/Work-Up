@@ -20,12 +20,12 @@ export default class Nav extends Component {
             Up
           </span>
         </h1>
-        <div className='nab-link-container'>
+        <div className='nav-link-container'>
           <button className='nav-link'>Dashboard</button>
           <button className='nav-link'>Workouts</button>
           <button className='nav-link'>Exercises</button>
         </div>
-        <h1 className='nav-username'>Welcome: { first_name }</h1>
+        <h3 className='nav-username'>Welcome: { first_name }</h3>
       </header>
     )
   }
