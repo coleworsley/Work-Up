@@ -13,7 +13,7 @@ exports.up = function(knex, Promise) {
     knex.schema.createTable('exercises', function(table) {
       table.increments('id').primary();
       table.string('exercise_name').unique();
-      table.string('exercise_description');
+      table.string('exercise_description', 2000);
       table.integer('count');
       table.integer('popularity');
       table.timestamps(true, true);

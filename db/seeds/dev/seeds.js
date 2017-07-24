@@ -1,4 +1,4 @@
-const mockData = require('./staticSeeds')
+const mockData = require('../staticSeeds')
 
 exports.seed = (knex, Promise) => {
   return Promise.all(

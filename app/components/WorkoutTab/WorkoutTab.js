@@ -9,6 +9,7 @@ export default class WorkoutTab extends Component {
       listedExercises: [],
     }
     this.randomize = this.randomize.bind(this);
+    this.saveWorkout = this.saveWorkout.bind(this);
   }
 
   componentDidMount(){
@@ -26,14 +27,45 @@ export default class WorkoutTab extends Component {
     randomizeExercises(all, 10)
   }
 
+  saveWorkout() {
+    const { current } = this.props.exercises;
+    const converted = JSON.stringify(current.map(e => {
+      return {
+        exercise_name: e.name,
+        exercise_description: e.description,
+        popularity: 1,
+      }
+    }));
+
+    fetch('api/v1/exercises', {
+      method: 'POST',
+      body: converted,
+      headers: { 'Content-Type': 'application/json' },
+    })
+    .then(res => res.json())
+    .then(data => console.log(data))
+  }
+
   render() {
     return (
       <main className='workout-tab'>
         <section className='workout-build'>
           <h1>Build Workout</h1>
-          <button
-            className='workout-randomize-btn'
-            onClick={this.randomize}>Randomize</button>
+          <div className="workout-btn-container">
+            <button
+              className='workout-randomize-btn'
+              onClick={this.randomize}>
+              Randomize
+            </button>
+            <button
+              className="save-workout-btn"
+              onClick={this.saveWorkout}>
+              Save Workout
+            </button>
+            {/* <button className="complete-workout-btn">Complete Workout
+
+            </button> */}
+          </div>
           <div className="exercise-container">
             {this.buildExercises()}
           </div>

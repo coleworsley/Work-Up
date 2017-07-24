@@ -18,7 +18,7 @@ exports.up = function(knex, Promise) {
       table.foreign('exercise_id').references('exercises.id');
     }),
 
-    knex.schema.createTable('workout_history', function(table) {
+    knex.schema.createTable('user_workouts', function(table) {
       table.increments('id').primary();
       table.integer('user_id').unsigned();
       table.foreign('user_id').references('users.id');

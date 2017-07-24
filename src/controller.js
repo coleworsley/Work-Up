@@ -38,7 +38,7 @@ function addNewWorkout(workout) {
   return db('workouts')
     .insert(workoutObj(workout), '*')
     .then(res => {
-      return db('workout_history')
+      return db('user_workouts')
         .insert({
           user_id: workout.user_id,
           workout_id: res[0].id,
@@ -85,15 +85,18 @@ function addWorkout(req, res) {
 
 
 function saveExercise(req, res) {
+  console.log(req.body)
   const promises = req.body.map(exercise => {
+    // console.log(exercise)
     return db('exercises')
       .where('exercise_name', exercise.exercise_name )
       .select('*')
       .then(response => {
-        console.log(response)
         if (!response.length) {
-          return db('exercises').insert(Object.assign(exercise, { count: 1 }), '*')
-          .then(() => `${exercise.exercise_name} was inserted`)
+          return db('exercises').insert(Object.assign({}, exercise, { count: 1 }), '*')
+          .then(() => {
+          console.log('IMADE IT HERE WTF!!!!')
+          return `${exercise.exercise_name} was inserted`})
         } else {
           return db('exercises').where('exercise_name', exercise.exercise_name).update({
             count: db.raw('count + 1'),
@@ -106,7 +109,7 @@ function saveExercise(req, res) {
 
   Promise.all(promises)
     .then(data => res.status(200).json({ data }))
-    .catch(error => res.status(500).json({ error }))
+    .catch(error => res.status(500).json({ error, helllooooo: 'HIIIIII' }))
 }
 
 module.exports = {
