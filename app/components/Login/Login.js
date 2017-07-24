@@ -86,9 +86,10 @@ export default class Login extends Component {
 
   componentWillReceiveProps(np) {
     const error = np.user.error ? np.user.error : '';
+
     // TODO: change workouts to dashboard when complete
     if(np.user.id) np.history.push('/workouts')
-    this.setState({ error })
+    this.setState({ error: error.detail || error })
   }
 
   render() {

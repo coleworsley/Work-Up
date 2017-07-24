@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { randomizeArr } from '../../constants'
+import {ExerciseCard} from '../ExerciseCard/ExerciseCard'
 
 export default class WorkoutTab extends Component {
   constructor() {
@@ -7,6 +8,7 @@ export default class WorkoutTab extends Component {
     this.state = {
       listedExercises: [],
     }
+    this.randomize = this.randomize.bind(this);
   }
 
   componentDidMount(){
@@ -14,26 +16,24 @@ export default class WorkoutTab extends Component {
     if (!all.length) fetchAPIExercises();
   }
 
-
-
   buildExercises() {
     const { all, current } = this.props.exercises;
-
-    return current.map(e => (
-      <div>
-        <p>{e.name}</p>
-        {/* <p>{e.description}</p> */}
-      </div>
-    ))
+    return current.map(e => <ExerciseCard key={e.id} {...e} />)
   }
 
+  randomize() {
+    const { randomizeExercises, exercises: { all } } = this.props;
+    randomizeExercises(all, 10)
+  }
 
   render() {
     return (
       <main className='workout-tab'>
-        this is the workout tab
         <section className='workout-build'>
           <h1>Build Workout</h1>
+          <button
+            className='workout-randomize-btn'
+            onClick={this.randomize}>Randomize</button>
           <div className="exercise-container">
             {this.buildExercises()}
           </div>

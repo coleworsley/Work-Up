@@ -8,6 +8,9 @@ const app = express();
 const router = require('./router');
 
 app.use(cors());
+// app.use(coors({
+//   allowedOrigins: ['localhost:3000']
+// }))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
