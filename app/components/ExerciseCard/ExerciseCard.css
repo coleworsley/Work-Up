@@ -1,0 +1,49 @@
+.exercise-card * {
+  color: inherit;
+}
+
+.exercise-card {
+  margin: 10px;
+  padding: 5px;
+  box-shadow: 0 3px 8px -6px #181818;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+}
+
+.exercise-card-header {
+  margin: 5px;
+  border-bottom: solid 1px #909090;
+  display: flex;
+  flex-direction: row;
+}
+
+.exercise-card-btn {
+  
+}
+
+
+/*
+.exercise-card::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  border-radius: 5px;
+  box-shadow: 0 3px 14px -6px #181818;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.exercise-card:hover {
+  color: #eeeeee;
+  transform: scale(1.05, 1.05);
+}
+
+
+.exercise-card:hover::after {
+  opacity: 1;
+  background-color: #3281f6;
+}*/

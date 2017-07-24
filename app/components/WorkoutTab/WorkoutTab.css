@@ -1,0 +1,9 @@
+.workout-tab {
+  display: flex;
+  flex-direction: row;
+}
+
+.workout-popular,
+.workout-build {
+  width: 50%;
+}

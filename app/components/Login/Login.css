@@ -22,7 +22,6 @@
   text-shadow: 3px 3px 5px #2a389c;
 }
 
-
 .login-card {
   display: flex;
   flex-direction: column;
@@ -44,8 +43,12 @@
 
 .login-input {
   font-size: 20px;
-  border-bottom: solid 2px #777877;
+  padding: 5px;
+  border: solid 1px #777877;
   min-width: 300px;
+  background-color: #EEE;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px 0 #C7C7C7 inset;
 }
 
 .login-input:focus {

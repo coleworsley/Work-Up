@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { randomizeArr } from '../../constants'
-import {ExerciseCard} from '../ExerciseCard/ExerciseCard'
+import { randomizeArr } from '../../constants';
+import ExerciseCard from '../ExerciseCard/ExerciseCard';
+import './WorkoutTab.css';
 
 export default class WorkoutTab extends Component {
   constructor() {
@@ -44,6 +45,11 @@ export default class WorkoutTab extends Component {
     })
     .then(res => res.json())
     .then(data => console.log(data))
+
+    fetch('api/v1/exercises')
+    .then(res => res.json())
+    .then(data => console.log(data))
+    .catch(error => console.log(error))
   }
 
   render() {

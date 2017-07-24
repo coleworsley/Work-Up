@@ -109,12 +109,22 @@ function saveExercise(req, res) {
 
   Promise.all(promises)
     .then(data => res.status(200).json({ data }))
-    .catch(error => res.status(500).json({ error, helllooooo: 'HIIIIII' }))
+    .catch(error => res.status(500).json({ error }))
 }
+
+
+function getAllExercises(req, res) {
+  db('exercises')
+  .select('*')
+  .then(exercises => res.status(200).json(exercises))
+  .catch(error => res.status(500).json(error))
+}
+
 
 module.exports = {
   login,
   signup,
   addWorkout,
   saveExercise,
+  getAllExercises
 };

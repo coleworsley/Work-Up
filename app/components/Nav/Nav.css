@@ -40,6 +40,10 @@
   cursor: pointer;
 }
 
+.nav-link:visited {
+  color: #eeeeee;
+}
+
 .nav-link:hover {
   border-color: #136EF6;
   background-color: #373636;
