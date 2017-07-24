@@ -1,20 +1,20 @@
 const exerciseData = [
   {
-    exercise_id: 1,
-    exercise_name: 'BenchPress',
-    exercise_description: 'Do some bench press shenanigans',
+    id: 1,
+    name: 'BenchPress',
+    description: 'Do some bench press shenanigans',
     popularity: 1,
   },
   {
-    exercise_id: 2,
-    exercise_name: 'PullUps',
-    exercise_description: 'Do some pull up shenanigans',
+    id: 2,
+    name: 'PullUps',
+    description: 'Do some pull up shenanigans',
     popularity: 1,
   },
   {
-    exercise_id: 3,
-    exercise_name: 'Chin UPSSSSS',
-    exercise_description: 'Something Something Something',
+    id: 3,
+    name: 'Chin UPSSSSS',
+    description: 'Something Something Something',
     popularity: 1,
   },
 ]

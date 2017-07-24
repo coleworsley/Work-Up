@@ -11,6 +11,7 @@ export default class WorkoutTab extends Component {
     }
     this.randomize = this.randomize.bind(this);
     this.saveWorkout = this.saveWorkout.bind(this);
+    this.getWorkoutData = this.getWorkoutData.bind(this);
   }
 
   componentDidMount(){
@@ -30,18 +31,33 @@ export default class WorkoutTab extends Component {
 
   saveWorkout() {
     const { current } = this.props.exercises;
-    const converted = JSON.stringify(current.map(e => {
+    const converted = current.map(e => {
       return {
-        exercise_name: e.name,
-        exercise_description: e.description,
+        name: e.name,
+        description: e.description,
         popularity: 1,
       }
-    }));
+    });
 
     fetch('api/v1/exercises', {
       method: 'POST',
-      body: converted,
+      body: JSON.stringify(converted),
       headers: { 'Content-Type': 'application/json' },
+    })
+    .then(res => res.json())
+    .then(data => console.log(data))
+
+    fetch('api/v1/workouts', {
+      method: 'POST',
+      body: JSON.stringify(Object.assign({
+        title: 'My First Workout',
+        description: 'placeholder',
+        user_id: 1,
+        popularity: 1,
+        count: 1,
+      }, {exercises: converted })),
+      headers: { 'Content-Type': 'application/json' },
+
     })
     .then(res => res.json())
     .then(data => console.log(data))
@@ -50,6 +66,10 @@ export default class WorkoutTab extends Component {
     .then(res => res.json())
     .then(data => console.log(data))
     .catch(error => console.log(error))
+  }
+
+  getWorkoutData() {
+
   }
 
   render() {

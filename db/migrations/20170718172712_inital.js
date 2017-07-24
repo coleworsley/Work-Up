@@ -12,8 +12,8 @@ exports.up = function(knex, Promise) {
 
     knex.schema.createTable('exercises', function(table) {
       table.increments('id').primary();
-      table.string('exercise_name').unique();
-      table.string('exercise_description', 2000);
+      table.string('name').unique();
+      table.string('description', 2000);
       table.integer('count');
       table.integer('popularity');
       table.timestamps(true, true);
@@ -25,6 +25,9 @@ exports.up = function(knex, Promise) {
       table.foreign('user_id').references('users.id')
       table.integer('exercise_id').unsigned();
       table.foreign('exercise_id').references('exercises.id')
+      table.integer('count');
+      table.integer('popularity');
+      table.timestamps(true, true);
     }),
   ])
 };

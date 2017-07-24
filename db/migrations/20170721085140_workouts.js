@@ -7,7 +7,7 @@ exports.up = function(knex, Promise) {
       table.integer('user_id').unsigned();
       table.foreign('user_id').references('users.id');
       table.integer('count');
-      table.integer('popularity')
+      table.integer('popularity');
     }),
 
     knex.schema.createTable('workout_exercises', function(table) {
@@ -24,13 +24,14 @@ exports.up = function(knex, Promise) {
       table.foreign('user_id').references('users.id');
       table.integer('workout_id').unsigned();
       table.foreign('workout_id').references('workouts.id');
+      table.timestamps(true, true);
     }),
   ]);
 };
 
 exports.down = function(knex, Promise) {
   return Promise.all([
-    knex.schema.dropTable('workout_history'),
+    knex.schema.dropTable('user_workouts'),
     knex.schema.dropTable('workout_exercises'),
     knex.schema.dropTable('workouts'),
   ])

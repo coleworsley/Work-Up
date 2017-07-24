@@ -65,7 +65,7 @@ function updateWorkoutHistory(workout, workout_id) {
   return workout.exercises.map(exercise => {
     return db('workout_exercises').insert({
       workout_id: workout.workout_id || workout_id,
-      exercise_id: exercise.exercise_id,
+      exercise_id: exercise.id,
     }, '*')
     .then(res => ({ history: 'success', value: res[0] }))
     .catch(error => ({ error, history: 'failed'}))
@@ -89,20 +89,19 @@ function saveExercise(req, res) {
   const promises = req.body.map(exercise => {
     // console.log(exercise)
     return db('exercises')
-      .where('exercise_name', exercise.exercise_name )
+      .where('name', exercise.name )
       .select('*')
       .then(response => {
         if (!response.length) {
           return db('exercises').insert(Object.assign({}, exercise, { count: 1 }), '*')
           .then(() => {
-          console.log('IMADE IT HERE WTF!!!!')
-          return `${exercise.exercise_name} was inserted`})
+          return `${exercise.name} was inserted`})
         } else {
-          return db('exercises').where('exercise_name', exercise.exercise_name).update({
+          return db('exercises').where('name', exercise.name).update({
             count: db.raw('count + 1'),
             popularity: db.raw('popularity + ?', [exercise.popularity])
           })
-          .then(() => `${exercise.exercise_name} was updated`)
+          .then(() => `${exercise.name} was updated`)
         }
       })
     })
@@ -120,11 +119,31 @@ function getAllExercises(req, res) {
   .catch(error => res.status(500).json(error))
 }
 
+function getAllWorkouts(req, res) {
+  db('workouts')
+  .select('*')
+  .then(workouts => {
+    console.log('workouts', workouts)
+    return workouts.map(workout => {
+      console.log('workout', workout)
+      workout.exercises = db('workout_exercises')
+      .where('workout_id', workout.id).select('*').then(exerciseList => {
+        return exerciseList
+      })
+      return workout
+    })
+  })
+  .then(response => res.status(200).json(response))
+  .catch(error => res.status(500).json(error))
+}
+
+
 
 module.exports = {
   login,
   signup,
   addWorkout,
   saveExercise,
-  getAllExercises
+  getAllExercises,
+  getAllWorkouts,
 };
