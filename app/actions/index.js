@@ -50,7 +50,6 @@ export const userLogInFail = (error) => {
 
 export const fetchUserLogin = (body) => {
   return (dispatch) => {
-    console.log(body)
     dispatch(userLoading(true))
 
     fetch('api/v1/login', {
@@ -86,7 +85,11 @@ export const fetchAPIExercises = (body) => {
       return res
     })
     .then(res => res.json())
-    .then(exercises => dispatch(pageDataRetrieved(exercises.results)))
+    .then(exercises => {
+      const { results } = exercises
+      dispatch(pageDataRetrieved(results))
+      dispatch(randomizeExercises(results, Math.min(results.length, 10)))
+    })
     .catch(error => pageDataFailed(error))
   }
 }
@@ -95,7 +98,7 @@ export const fetchAPIExercises = (body) => {
 export const pageLoading = (bool) => {
   return {
     type: 'PAGE_IS_LOADING',
-    userLoading: bool,
+    pageLoading: bool,
   }
 }
 
@@ -110,5 +113,13 @@ export const pageDataFailed = (error) => {
   return {
     type: 'PAGE_FETCH_FAIL',
     error,
+  }
+}
+
+export const randomizeExercises = (array, count) => {
+
+  return {
+    type: 'RANDOMIZE_EXERCISES',
+    data: { array, count },
   }
 }

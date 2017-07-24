@@ -3,6 +3,7 @@ import { Route, Redirect } from 'react-router-dom';
 
 import NavContainer from '../../containers/NavContainer';
 import LoginContainer from '../../containers/LoginContainer';
+import WorkoutTabContainer from '../../containers/WorkoutTabContainer';
 
 import Dashboard from '../Dashboard/Dashboard';
 import WorkoutTab from '../WorkoutTab/WorkoutTab';
@@ -26,7 +27,7 @@ export default class App extends Component {
         />
 
         <Route exact path='/login' component={LoginContainer} />
-        <Route path='/workouts' component={WorkoutTab} />
+        <Route path='/workouts' component={WorkoutTabContainer} />
         {/* <Route path='/dashboard' component={Dashboard} /> */}
 
       </div>

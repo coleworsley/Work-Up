@@ -1,26 +1,25 @@
 import React, { Component } from 'react';
+import { randomizeArr } from '../../constants'
 
 export default class WorkoutTab extends Component {
   constructor() {
     super();
     this.state = {
-      data: []
+      listedExercises: [],
     }
   }
 
   componentDidMount(){
-    if (!(this.state.data.length > 0)) {
-      fetch('https://wger.de/api/v2/exercise/?format=json&language=2&limit=20')
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
-        this.setState({ data: data.results })
-      })
-    }
+    const { fetchAPIExercises, randomizeExercises, exercises: { all } } = this.props;
+    if (!all.length) fetchAPIExercises();
   }
 
+
+
   buildExercises() {
-    return this.state.data.map(e => (
+    const { all, current } = this.props.exercises;
+
+    return current.map(e => (
       <div>
         <p>{e.name}</p>
         {/* <p>{e.description}</p> */}
