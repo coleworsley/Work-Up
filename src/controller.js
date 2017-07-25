@@ -3,185 +3,26 @@ const configuration = require('../knexfile')[environment];
 const db = require('knex')(configuration);
 const bookshelf = require('bookshelf')(db);
 
-
-const User = bookshelf.Model.extend({
-  tableName: 'users',
-  hasTimestamps: true,
-
-  verifyPassword: function(password) {
-      return this.get('password') === password;
-  },
-
-  workouts: function() {
-    return this.hasMany(Workout)
-  },
-
-  exercises: function() {
-    return this.hasMany(Exercise)
-  }
-}, {
-  byEmail: function(email) {
-      return this.forge().query({where:{ email: email }}).fetch();
-  }
-});
-
-const Workout = bookshelf.Model.extend({
-  tableName: 'workouts',
-
-  users: function() {
-    return this.belongsTo(User)
-  },
-
-  exercises: function() {
-    return this.hasMany(Exercise)
-  }
-})
-
-
-const Exercise = bookshelf.Model.extend({
-  tableName: 'exercises',
-
-  workouts: function() {
-    return this.belongsToMany(Workout)
-  }
-
-})
-
-const Users = bookshelf.Collection.extend({
-  model: User
-})
-
-const Workouts = bookshelf.Collection.extend({
-  model: Workout
-})
-
-const Exercises = bookshelf.Collection.extend({
-  model: Exercise
-})
-
-
-
-function createUser(req, res) {
-  User.forge(req.body).save()
-  .then(user => res.status(200).json({
-      error: false,
-      data: {
-        id: user.get('id'),
-        first_name: user.get('first_name'),
-        last_name: user.get('last_name'),
-        email: user.get('email')
-      }
-    }))
-  .catch(err => res.status(500).json({
-      error: true,
-      data: {message: err.message}
-    }));
-}
-
-function loginUser(req, res) {
-  User.where(req.body).fetch()
-  .then(user => res.status(200).json({
-      error: false,
-      data: {
-        id: user.get('id'),
-        first_name: user.get('first_name'),
-        last_name: user.get('last_name'),
-        email: user.get('email')
-      }
-    }))
-  .catch(err => res.status(500).json({
-      error: true,
-      data: {message: err.message}
-    }))
-}
-
-
-function getAllExercisesTest(req, res) {
-  Exercises.forge().fetch()
-  .then(collection => res.status(200).json({
-      error: false,
-      data: collection.toJSON()
-    }))
-  .catch(err => res.status(500).json({
-      error: true,
-      data: {message: err.message}
-    }))
-}
-
-// function createExercise(req, res) {
-//   Exercises.forge(req.body).
-//   .save()
-//   .then(exercise => res.status(200).json({
-//     error: false,
-//     data:
-//   }))
-// }
-//
-//
-// function addWorkoutTest (req, res) {
-//
-// }
-
-function workoutObj(workout) {
-  return {
-    title: workout.title,
-    description: workout.description,
-    count: 1,
-    user_id: workout.user_id,
-    popularity: workout.popularity,
-  }
-}
-
-
-function saveExercises(req, res) {
-
-  Exercises.forge().where('exercise_name', req.body.name).fetch()
-  .then(collection => res.status(200).json({
-      error: false,
-      data: collection.toJSON()
-  }))
-  .catch(err => res.status(500).json({
-      error: true,
-      data: {message: err.message}
-  }))
-}
-
-
-router.route('/posts/:id')
-  // fetch a post by id
-  .get(function (req, res) {
-    Post.forge({id: req.params.id})
-    .fetch({withRelated: ['category', 'tags']})
-    .then(function (post) {
-      if (!post) {
-        res.status(404).json({error: true, data: {}});
-      }
-      else {
-        res.json({error: false, data: post.toJSON()});
-      }
-    })
-    .catch(function (err) {
-      res.status(500).json({error: true, data: {message: err.message}});
-    });
-  });
-
-
-
-
-
-
-
 function login(req, res) {
-  db('users').where(req.body).select('id', 'email', 'first_name', 'last_name')
-    .then(user => {
-      if (user.length) {
-        res.status(200).json(user[0]);
-      } else {
-        res.status(404).json({ error: 'email and or password not found'})
-      }
-    })
-    .catch((error) => {
-      response.status(500).json({ error })
+  db('users').where(req.body)
+  .select('id', 'email', 'first_name', 'last_name')
+  .then(user => {
+    if (user.length) {
+      res.status(200).json({
+        error: false,
+        data: user[0]
+      });
+    } else {
+      res.status(404).json({
+        error: true,
+        data: {message: 'email or password not found'}})
+    }
+  })
+  .catch((error) => {
+      response.status(500).json({
+        error: true,
+        data: {message: error.message}
+      })
     })
 }
 
@@ -189,8 +30,14 @@ function signup(req, res) {
   const user = req.body
 
   db('users').insert(user, ['id', 'email', 'first_name', 'last_name'])
-    .then(user => res.status(200).json(user[0]))
-    .catch(error => res.status(500).json({ error }))
+    .then(user => res.status(200).json({
+      error: false,
+      data: user[0]
+    }))
+    .catch(error => res.status(500).json({
+      error: true,
+      data: {message: error.message}
+    }))
 }
 
 function workoutObj(workout) {
@@ -253,38 +100,90 @@ function addWorkout(req, res) {
 }
 
 
-function saveExercise(req, res) {
-  console.log(req.body)
-  const promises = req.body.map(exercise => {
-    return db('exercises')
-      .where('name', exercise.name )
-      .select('*')
-      .then(response => {
-        if (!response.length) {
-          return db('exercises').insert(Object.assign({}, exercise, { count: 1 }), '*')
-          .then(() => {
-          return `${exercise.name} was inserted`})
-        } else {
-          return db('exercises').where('name', exercise.name).update({
-            count: db.raw('count + 1'),
-            popularity: db.raw('popularity + ?', [exercise.popularity])
-          })
-          .then(() => `${exercise.name} was updated`)
-        }
-      })
-    })
 
-  Promise.all(promises)
-    .then(data => res.status(200).json({ data }))
-    .catch(error => res.status(500).json({ error }))
+function saveWorkout(req, res) {
+  const workout = req.body;
+  db('workouts').where('id', workout.id || 0).select()
+  .then(response => {
+    if (!response.length) {
+      const newObject = Object.assign({}, workout, { count: 1 });
+      delete newObject.exercises;
+      return db('workouts').insert(newObject, 'id')
+    } else {
+      return db('workouts').where('id', workout.id).update({
+        count: db.raw('count + 1'),
+        popularity: db.raw('popularity + ?', [workout.popularity])
+      }, 'id')
+    }
+  })
+  .then(id => db('user_workouts').insert({
+      user_id: workout.user_id,
+      workout_id: id[0]
+    }).then(()=> {
+      return Promise.all(workout.exercises.map(exercise => {
+        saveExercise(exercise).then(exercise_id => {
+          return db('workout_exercises').insert({
+            workout_id: id[0],
+            exercise_id: exercise_id[0]
+          })
+          .then(() => exercise_id[0])
+        })
+      }))
+    })
+  )
+  .then(() => res.status(200).json({
+    error: false,
+    data: workout
+  }))
+  .catch(error => res.status(500).json({
+    error: true,
+    data: {message: error.message}
+  }))
 }
+
+
+function saveExercise(exercise) {
+  return db('exercises')
+    .where('name', exercise.name)
+    .select('*')
+    .then(response => {
+      if (!response.length) {
+        return db('exercises')
+          .insert(Object.assign({}, exercise, { count: 1 }), 'id')
+      } else {
+        return db('exercises').where('name', exercise.name)
+        .returning('id').update({
+          count: db.raw('count + 1'),
+          popularity: db.raw('popularity + ?', [exercise.popularity])
+        })
+      }
+    })
+}
+
+function saveExercises(req, res) {
+  Promise.all(req.body.map(exercise => saveExercise(exercise)))
+  .then(data => res.status(200).json({
+    error: false,
+    data: data.reduce((a, b) => a.concat(b))}))
+  .catch(error => res.status(500).json({
+    error: true,
+    data: {message: error.message}
+  }))
+}
+
 
 
 function getAllExercises(req, res) {
   db('exercises')
   .select('*')
-  .then(exercises => res.status(200).json(exercises))
-  .catch(error => res.status(500).json(error))
+  .then(exercises => res.status(200).json({
+    error: false,
+    data: exercises
+  }))
+  .catch(error => res.status(500).json({
+    error: true,
+    data: {message: error.message}
+  }))
 }
 
 function getAllWorkouts(req, res) {
@@ -310,12 +209,10 @@ function getAllWorkouts(req, res) {
 module.exports = {
   login,
   signup,
-  addWorkout,
-  saveExercise,
+  saveExercises,
   getAllExercises,
   getAllWorkouts,
-  createUser,
-  loginUser,
-  getAllExercisesTest,
-  saveExercises
+  saveWorkout
 };
+
+// addWorkout,
