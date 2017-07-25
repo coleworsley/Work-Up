@@ -4,10 +4,6 @@ const db = require('knex')(configuration);
 const bookshelf = require('bookshelf')(db);
 
 
-const Users = bookshelf.Model.extend({
-  tableName: 'users'
-});
-
 const User = bookshelf.Model.extend({
   tableName: 'users',
   hasTimestamps: true,
@@ -18,6 +14,10 @@ const User = bookshelf.Model.extend({
 
   workouts: function() {
     return this.hasMany(Workout)
+  },
+
+  exercises: function() {
+    return this.hasMany(Exercise)
   }
 }, {
   byEmail: function(email) {
@@ -28,38 +28,145 @@ const User = bookshelf.Model.extend({
 const Workout = bookshelf.Model.extend({
   tableName: 'workouts',
 
-  User: function() {
+  users: function() {
     return this.belongsTo(User)
+  },
+
+  exercises: function() {
+    return this.hasMany(Exercise)
   }
 })
 
-User.byEmail('').then(function(u) {
-    console.log('Got user:', u.get('first_name'));
-});
 
-var data = {
-    first_name: 'Joe',
-    last_name: 'Joe',
-    email: 'smitch@example.com',
-    password: 28
+const Exercise = bookshelf.Model.extend({
+  tableName: 'exercises',
+
+  workouts: function() {
+    return this.belongsToMany(Workout)
+  }
+
+})
+
+const Users = bookshelf.Collection.extend({
+  model: User
+})
+
+const Workouts = bookshelf.Collection.extend({
+  model: Workout
+})
+
+const Exercises = bookshelf.Collection.extend({
+  model: Exercise
+})
+
+
+
+function createUser(req, res) {
+  User.forge(req.body).save()
+  .then(user => res.status(200).json({
+      error: false,
+      data: {
+        id: user.get('id'),
+        first_name: user.get('first_name'),
+        last_name: user.get('last_name'),
+        email: user.get('email')
+      }
+    }))
+  .catch(err => res.status(500).json({
+      error: true,
+      data: {message: err.message}
+    }));
 }
 
-User.forge(data).save().then(function(u) {
-    console.log('User saved:', u.get('first_name'));
-});
+function loginUser(req, res) {
+  User.where(req.body).fetch()
+  .then(user => res.status(200).json({
+      error: false,
+      data: {
+        id: user.get('id'),
+        first_name: user.get('first_name'),
+        last_name: user.get('last_name'),
+        email: user.get('email')
+      }
+    }))
+  .catch(err => res.status(500).json({
+      error: true,
+      data: {message: err.message}
+    }))
+}
 
 
+function getAllExercisesTest(req, res) {
+  Exercises.forge().fetch()
+  .then(collection => res.status(200).json({
+      error: false,
+      data: collection.toJSON()
+    }))
+  .catch(err => res.status(500).json({
+      error: true,
+      data: {message: err.message}
+    }))
+}
 
-function getUsersTest(req, res ) {
-  new Users().fetchAll()
-  .then(function(articles) {
-    res.send(articles.toJSON());
-  }).catch(function(error) {
-    console.log(error);
-    res.send('An error occured');
+// function createExercise(req, res) {
+//   Exercises.forge(req.body).
+//   .save()
+//   .then(exercise => res.status(200).json({
+//     error: false,
+//     data:
+//   }))
+// }
+//
+//
+// function addWorkoutTest (req, res) {
+//
+// }
+
+function workoutObj(workout) {
+  return {
+    title: workout.title,
+    description: workout.description,
+    count: 1,
+    user_id: workout.user_id,
+    popularity: workout.popularity,
+  }
+}
+
+
+function saveExercises(req, res) {
+
+  Exercises.forge().where('exercise_name', req.body.name).fetch()
+  .then(collection => res.status(200).json({
+      error: false,
+      data: collection.toJSON()
+  }))
+  .catch(err => res.status(500).json({
+      error: true,
+      data: {message: err.message}
+  }))
+}
+
+
+router.route('/posts/:id')
+  // fetch a post by id
+  .get(function (req, res) {
+    Post.forge({id: req.params.id})
+    .fetch({withRelated: ['category', 'tags']})
+    .then(function (post) {
+      if (!post) {
+        res.status(404).json({error: true, data: {}});
+      }
+      else {
+        res.json({error: false, data: post.toJSON()});
+      }
+    })
+    .catch(function (err) {
+      res.status(500).json({error: true, data: {message: err.message}});
+    });
   });
 
-}
+
+
 
 
 
@@ -149,7 +256,6 @@ function addWorkout(req, res) {
 function saveExercise(req, res) {
   console.log(req.body)
   const promises = req.body.map(exercise => {
-    // console.log(exercise)
     return db('exercises')
       .where('name', exercise.name )
       .select('*')
@@ -208,5 +314,8 @@ module.exports = {
   saveExercise,
   getAllExercises,
   getAllWorkouts,
-  getUsersTest
+  createUser,
+  loginUser,
+  getAllExercisesTest,
+  saveExercises
 };
