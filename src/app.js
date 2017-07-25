@@ -13,7 +13,6 @@ app.use(cors());
 // }))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 if (process.env.NODE_ENV !== 'production') {
   const webpack = require('webpack');
   const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -34,6 +33,8 @@ app.get('/', function (req, res) { res.sendFile(path.join(__dirname, '/../index.
 
 app.use('/api/v1', router);
 app.get('/*', function (req, res) { res.sendFile(path.join(__dirname, '/../index.html')) });
+
+
 
 app.listen(port);
 console.log(`Server listening at http://localhost:${port}`);

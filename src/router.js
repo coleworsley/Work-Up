@@ -8,5 +8,6 @@ router.post('/workouts', controller.addWorkout)
 router.get('/workouts', controller.getAllWorkouts)
 router.post('/exercises', controller.saveExercise)
 router.get('/exercises', controller.getAllExercises)
+router.get('/test', controller.getUsersTest)
 
 module.exports = router;

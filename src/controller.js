@@ -1,6 +1,68 @@
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const db = require('knex')(configuration);
+const bookshelf = require('bookshelf')(db);
+
+
+const Users = bookshelf.Model.extend({
+  tableName: 'users'
+});
+
+const User = bookshelf.Model.extend({
+  tableName: 'users',
+  hasTimestamps: true,
+
+  verifyPassword: function(password) {
+      return this.get('password') === password;
+  },
+
+  workouts: function() {
+    return this.hasMany(Workout)
+  }
+}, {
+  byEmail: function(email) {
+      return this.forge().query({where:{ email: email }}).fetch();
+  }
+});
+
+const Workout = bookshelf.Model.extend({
+  tableName: 'workouts',
+
+  User: function() {
+    return this.belongsTo(User)
+  }
+})
+
+User.byEmail('').then(function(u) {
+    console.log('Got user:', u.get('first_name'));
+});
+
+var data = {
+    first_name: 'Joe',
+    last_name: 'Joe',
+    email: 'smitch@example.com',
+    password: 28
+}
+
+User.forge(data).save().then(function(u) {
+    console.log('User saved:', u.get('first_name'));
+});
+
+
+
+function getUsersTest(req, res ) {
+  new Users().fetchAll()
+  .then(function(articles) {
+    res.send(articles.toJSON());
+  }).catch(function(error) {
+    console.log(error);
+    res.send('An error occured');
+  });
+
+}
+
+
+
 
 function login(req, res) {
   db('users').where(req.body).select('id', 'email', 'first_name', 'last_name')
@@ -146,4 +208,5 @@ module.exports = {
   saveExercise,
   getAllExercises,
   getAllWorkouts,
+  getUsersTest
 };
