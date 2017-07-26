@@ -3,6 +3,7 @@ import { routerReducer } from 'react-router-redux';
 import { userReducer, userLoading } from './userReducer';
 import { exercises, pageLoading } from './exerciseReducer';
 import { workoutReducer } from './workoutReducer';
+import { detailReducer } from './detailReducer';
 
 
 export default combineReducers({
@@ -12,4 +13,5 @@ export default combineReducers({
   exercises,
   loading: pageLoading,
   workouts: workoutReducer,
+  detail: detailReducer
 });

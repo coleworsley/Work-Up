@@ -1,3 +1,7 @@
+import { EXERCISES_URL,
+         EXERCISE_IMG_BASE_URL } from '../constants';
+
+
 export const fetchUserSignUp = (body) => {
   return (dispatch) => {
     dispatch(userLoading(true))
@@ -78,7 +82,7 @@ export const fetchAPIExercises = (body) => {
   return (dispatch) => {
     dispatch(pageLoading(true))
 
-    fetch('https://wger.de/api/v2/exercise/?format=json&language=2&license_author=wger.de&limit=66')
+    fetch(EXERCISES_URL)
     .then(res => {
       dispatch(pageLoading(false))
       return res
@@ -90,6 +94,34 @@ export const fetchAPIExercises = (body) => {
       dispatch(randomizeExercises(results, Math.min(results.length, 10)))
     })
     .catch(error => pageDataFailed(error))
+  }
+}
+
+export const fetchImageUrls = (exercise) => {
+  return (dispatch) => {
+    dispatch(showDetail(exercise))
+    fetch(EXERCISE_IMG_BASE_URL + exercise.id)
+    .then(res => res.json())
+    .then(data => {
+      const urls = data.results.map(e => e.image);
+      dispatch(imageUrlSuccess({urls, id: exercise.id}))
+      dispatch(showDetail(Object.assign({}, exercise, {imageUrls: urls})))
+    })
+    .catch(error => console.log(error))
+  }
+}
+
+export const showDetail = (exercise) => {
+  return {
+    type: 'SHOW_DETAIL',
+    exercise,
+  }
+}
+
+export const imageUrlSuccess = (data) => {
+  return {
+    type: 'IMAGE_URL_SUCCESS',
+    data,
   }
 }
 

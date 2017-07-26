@@ -1,5 +1,6 @@
 // URLs
-
+export const EXERCISES_URL = 'https://wger.de/api/v2/exercise/?format=json&language=2&license_author=wger.de&limit=10'
+export const EXERCISE_IMG_BASE_URL = 'https://wger.de/api/v2/exerciseimage/?format=json&exercise='
 
 // Functions
 export const randomizeArr = (array, count) => {

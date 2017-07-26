@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { randomizeArr } from '../../constants';
-import ExerciseCard from '../ExerciseCard/ExerciseCard';
+import ExerciseCardContainer from '../../containers/ExerciseCardContainer';
 import './WorkoutTab.css';
 
 export default class WorkoutTab extends Component {
@@ -27,8 +27,10 @@ export default class WorkoutTab extends Component {
   }
 
   buildExercises() {
-    const { all, current } = this.props.exercises;
-    return current.map(e => <ExerciseCard key={e.id} {...e} />)
+    const { exercises: {current} } = this.props;
+    return current.map(e => (
+      <ExerciseCardContainer key={e.id} {...e}/>)
+    )
   }
 
   buildWorkouts() {
@@ -69,9 +71,9 @@ export default class WorkoutTab extends Component {
   }
 
   render() {
-    const imageUrl = !this.state.imageUrls.length
-      ? ''
-      : this.state.imageUrls[0].image
+    // const imageUrl = !this.state.imageUrls.length
+    //   ? ''
+    //   : this.state.imageUrls[0].image
 
 
     return (
@@ -97,7 +99,7 @@ export default class WorkoutTab extends Component {
         </section>
         <section className='workout-popular'>
           <h1>Popular Workouts</h1>
-            <img src={imageUrl} alt=""/>
+            {/* <img src={imageUrl} alt=""/> */}
             {/* {this.buildWorkouts()} */}
 
         </section>
