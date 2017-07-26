@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { randomizeArr } from '../../constants';
 import ExerciseCardContainer from '../../containers/ExerciseCardContainer';
 import './WorkoutTab.css';
+import DetailViewContainer from '../../containers/DetailViewContainer'
 
 export default class WorkoutTab extends Component {
   constructor() {
@@ -99,6 +100,7 @@ export default class WorkoutTab extends Component {
         </section>
         <section className='workout-popular'>
           <h1>Popular Workouts</h1>
+          <DetailViewContainer />
             {/* <img src={imageUrl} alt=""/> */}
             {/* {this.buildWorkouts()} */}
 
