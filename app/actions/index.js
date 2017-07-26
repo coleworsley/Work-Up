@@ -145,3 +145,20 @@ export const saveWorkoutSuccess = (data) => {
     data,
   }
 }
+
+export const fetchWorkouts = () => {
+  return (dispatch) => {
+    fetch('api/v1/workouts')
+    .then(res => res.json())
+    .then(data => {
+      dispatch(fetchWorkoutsSuccess(data))
+    })
+  }
+}
+
+export const fetchWorkoutsSuccess = (data) => {
+  return {
+    type: 'FETCH_WORKOUT_SUCCESS',
+    data,
+  }
+}

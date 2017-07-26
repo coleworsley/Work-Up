@@ -5,12 +5,25 @@ export default class ExerciseCard extends Component {
   constructor() {
     super();
     this.state = {
-
+      sets: 3,
+      reps: 8,
+      type: 'Weight',
+      measure: 'lbs',
+      unit: 180,
+      disabled: true,
     }
   }
 
+  updateState (e) {
+    const { name, value } = e.target
+
+    this.setState({ [name]: value })
+  }
+
+
   render() {
     const { name, description } = this.props;
+    const { sets, reps, unit, measure, type, disabled } = this.state
     return (
       <article className='exercise-card'>
         <header className='exercise-card-header'>
@@ -20,11 +33,27 @@ export default class ExerciseCard extends Component {
         </header>
         <div className='exercise-card-stats'>
           <label htmlFor='sets'>Sets</label>
-          <input type='text' name='sets' value='3'/>
-          <label htmlFor='sets'>Reps</label>
-          <input type='text' name='reps' value='8'/>
-          <label htmlFor='sets'>Weight</label>
-          <input type='text' name='reps' value='100tons'/>
+          <input type='text'
+            name='sets'
+            value={sets}
+            disabled={disabled}
+            onChange={(e)=>this.updateState(e)}
+          />
+          <label htmlFor='reps'>Reps</label>
+          <input type='text'
+            name='reps'
+            value={reps}
+            disabled={disabled}
+            onChange={(e)=>this.updateState(e)}
+          />
+          <label htmlFor='other'>{type}</label>
+          <input type='text'
+            name='unit'
+            value={unit}
+            disabled={disabled}
+            onChange={(e)=>this.updateState(e)}
+          />
+          <label htmlFor='other'>{measure}</label>
         </div>
       </article>
     )

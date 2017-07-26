@@ -8,6 +8,7 @@ export default class WorkoutTab extends Component {
     super();
     this.state = {
       listedExercises: [],
+      imageUrls: []
     }
     this.randomize = this.randomize.bind(this);
     this.saveWorkout = this.saveWorkout.bind(this);
@@ -15,8 +16,14 @@ export default class WorkoutTab extends Component {
   }
 
   componentDidMount(){
-    const { fetchAPIExercises, randomizeExercises, exercises: { all } } = this.props;
-    if (!all.length) fetchAPIExercises();
+    const { fetchAPIExercises, fetchWorkouts, randomizeExercises, exercises: { all }, workouts } = this.props;
+    if (!all.length) {fetchAPIExercises()};
+    if (!workouts.length) fetchWorkouts()
+
+    fetch('https://wger.de/api/v2/exerciseimage/')
+      .then(res => res.json())
+      .then(data => this.setState({imageUrls: data.results}))
+
   }
 
   buildExercises() {
@@ -24,13 +31,26 @@ export default class WorkoutTab extends Component {
     return current.map(e => <ExerciseCard key={e.id} {...e} />)
   }
 
+  buildWorkouts() {
+    const { workouts } = this.props;
+
+    return workouts.length ? workouts.map(e => (
+      <div>
+        <h3>Workout title: {e.title}</h3>
+        <p>Workout description: {e.description}</p>
+        <p>Workout exercises: {e.exercises.map(exercise => <p>{exercise.name}</p>)}</p>
+      </div>
+    ))
+    : null
+  }
+
+
   randomize() {
     const { randomizeExercises, exercises: { all } } = this.props;
     randomizeExercises(all, 1)
   }
 
   saveWorkout() {
-    console.log(this.props)
     const { exercises: { current }, saveWorkout, user } = this.props;
     const workout = Object.assign({
       user_id: user.id,
@@ -49,6 +69,11 @@ export default class WorkoutTab extends Component {
   }
 
   render() {
+    const imageUrl = !this.state.imageUrls.length
+      ? ''
+      : this.state.imageUrls[0].image
+
+
     return (
       <main className='workout-tab'>
         <section className='workout-build'>
@@ -64,9 +89,6 @@ export default class WorkoutTab extends Component {
               onClick={this.saveWorkout}>
               Save Workout
             </button>
-            {/* <button className="complete-workout-btn">Complete Workout
-
-            </button> */}
           </div>
           <div className="exercise-container">
             {this.buildExercises()}
@@ -75,6 +97,8 @@ export default class WorkoutTab extends Component {
         </section>
         <section className='workout-popular'>
           <h1>Popular Workouts</h1>
+            <img src={imageUrl} alt=""/>
+            {/* {this.buildWorkouts()} */}
 
         </section>
       </main>

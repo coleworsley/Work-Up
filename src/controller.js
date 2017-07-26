@@ -111,8 +111,6 @@ function saveExercises(req, res) {
   }))
 }
 
-
-
 function getAllExercises(req, res) {
   db('exercises')
   .select('*')
@@ -128,20 +126,33 @@ function getAllExercises(req, res) {
 
 function getAllWorkouts(req, res) {
   db('workouts')
-  .select('*')
+  .select()
   .then(workouts => {
-    console.log('workouts', workouts)
-    return workouts.map(workout => {
-      console.log('workout', workout)
-      workout.exercises = db('workout_exercises')
-      .where('workout_id', workout.id).select('*').then(exerciseList => {
-        return exerciseList
-      })
-      return workout
-    })
+    return Promise.all(workouts.map(workout => {
+      return db('workout_exercises')
+        .where('workout_id', workout.id)
+        .select('exercise_id')
+        .then(exerciseIdArray => {
+
+          return Promise.all(exerciseIdArray.map(exercise => {
+            return db('exercises')
+              .where('id', exercise.exercise_id || 0)
+              .select()
+              .then(exercise => exercise[0])
+          }))
+          .then(exercises => Object.assign(workout, {exercises}))
+
+        })
+    }))
   })
-  .then(response => res.status(200).json(response))
-  .catch(error => res.status(500).json(error))
+  .then(workouts => res.status(200).json({
+    error: false,
+    data: workouts
+  }))
+  .catch(error => res.status(500).json({
+    error: true,
+    data: {message: error.message}
+  }))
 }
 
 
