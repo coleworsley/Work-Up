@@ -40,69 +40,9 @@ function signup(req, res) {
     }))
 }
 
-function workoutObj(workout) {
-  return {
-    title: workout.title,
-    description: workout.description,
-    count: 1,
-    user_id: workout.user_id,
-    popularity: workout.popularity,
-  }
-}
-
-function addNewWorkout(workout) {
-  return db('workouts')
-    .insert(workoutObj(workout), '*')
-    .then(res => {
-      return db('user_workouts')
-        .insert({
-          user_id: workout.user_id,
-          workout_id: res[0].id,
-        }, '*')
-        .then(res => {
-          return Promise.all(updateWorkoutHistory(workout, res[0].workout_id))
-        })
-        .catch(error => ({ error, insert: 'failed'}))
-    })
-}
-
-function updateWorkout(workout) {
-  return db('workouts')
-    .where({ id: workout.workout_id})
-    .update({
-      count: db.raw('count + 1'),
-      popularity: db.raw('popularity + ?', [workout.popularity])
-    }, '*')
-    .then(res => Promise.all(updateWorkoutHistory(workout)))
-    .catch(error => ({ error, update: 'failed'}))
-}
-
-function updateWorkoutHistory(workout, workout_id) {
-  return workout.exercises.map(exercise => {
-    return db('workout_exercises').insert({
-      workout_id: workout.workout_id || workout_id,
-      exercise_id: exercise.id,
-    }, '*')
-    .then(res => ({ history: 'success', value: res[0] }))
-    .catch(error => ({ error, history: 'failed'}))
-  })
-}
-
-function createWorkoutPromises(req) {
-  const workout = req.body;
-  return !workout.workout_id ? addNewWorkout(workout) : updateWorkout(workout)
-}
-
-function addWorkout(req, res) {
-  createWorkoutPromises(req)
-    .then(data => res.status(200).json({ success: true, data }))
-    .catch(error => res.status(500).json({ error: error }))
-}
-
-
-
 function saveWorkout(req, res) {
   const workout = req.body;
+  console.log(workout);
   db('workouts').where('id', workout.id || 0).select()
   .then(response => {
     if (!response.length) {

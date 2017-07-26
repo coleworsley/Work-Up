@@ -5,9 +5,9 @@ export const exercises = (state={all:[],current:[]}, action) => {
     case 'PAGE_FETCH_SUCCESS':
       return Object.assign({}, state, { all: action.data });
     case 'RANDOMIZE_EXERCISES':
-      const current = randomizeArr(action.data.array, action.data.count)
+      const randomized = randomizeArr(action.data.array, action.data.count)
+      const current = randomized.map(e => Object.assign(e, {popularity: 1}))
       return Object.assign({}, state, { current: current })
-      return state
     default:
       return state;
   }

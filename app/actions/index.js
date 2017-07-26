@@ -15,12 +15,11 @@ export const fetchUserSignUp = (body) => {
     })
     .then(res => res.json())
     .then(user => {
-      if (user.err) {
-        console.log('error')
-        dispatch(userLogInFail(user.err))
+      console.log(user)
+      if (user.error) {
+        dispatch(userLogInFail(user.error))
       } else {
-        console.log('success')
-        dispatch(userLogInSuccess(user))
+        dispatch(userLogInSuccess(user.data))
       }
     })
     .catch(err => console.log(err))
@@ -66,12 +65,12 @@ export const fetchUserLogin = (body) => {
     .then(res => res.json())
     .then(user => {
       if (user.error) {
-        dispatch(userLogInFail(user))
+        dispatch(userLogInFail(user.data))
       } else {
-        dispatch(userLogInSuccess(user))
+        dispatch(userLogInSuccess(user.data))
       }
     })
-    .catch(err => dispatch(userLogInFail(err)))
+    .catch(error => dispatch(userLogInFail(error.message)))
   }
 }
 
@@ -117,9 +116,32 @@ export const pageDataFailed = (error) => {
 }
 
 export const randomizeExercises = (array, count) => {
-
   return {
     type: 'RANDOMIZE_EXERCISES',
     data: { array, count },
+  }
+}
+
+
+export const saveWorkout = (body) => {
+  return (dispatch) => {
+    fetch('api/v1/workouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
+    .then(res => res.json())
+    .then(data => {
+      dispatch(saveWorkoutSuccess(data))
+    })
+  }
+}
+
+export const saveWorkoutSuccess = (data) => {
+  return {
+    type: 'SAVE_WORKOUT_SUCCESS',
+    data,
   }
 }
