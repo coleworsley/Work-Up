@@ -21,9 +21,7 @@ export default class WorkoutTab extends Component {
             randomizeExercises,
             exercises: { all },
             workouts,
-            fetchCategories,
             categories } = this.props;
-    // if (!Object.keys(categories).length) fetchCategories()
     if (!all.length) fetchAPIExercises()
     if (!workouts.length) fetchWorkouts()
   }

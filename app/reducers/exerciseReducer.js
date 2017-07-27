@@ -2,6 +2,7 @@ import { randomizeArr } from '../constants';
 
 export const exercises = (state={all:[],current:[]}, action) => {
   switch (action.type) {
+    
     case 'PAGE_FETCH_SUCCESS':
       const { exercises, categories } = action.data;
       const muscleArray = categories[0].results;

@@ -19,13 +19,20 @@ export default class ExerciseCard extends Component {
     this.setState({ [name]: value })
   }
 
+  getImages () {
+    const { imageUrls, fetchImageUrls } = this.props;
+    if (!imageUrls) fetchImageUrls(this.props)
+  }
+
   render() {
     const { id, name, description, fetchImageUrls, showDetail, active } = this.props;
     const { sets, reps, unit, measure, type, disabled } = this.state;
+
     return (
       <article
         className={`exercise-card ${active ? 'active' : ''}`}
-        onClick={() => fetchImageUrls(this.props)}>
+        onClick={() => this.getImages()}>
+
         <header className='exercise-card-header'>
           <h3 className='exercise-card-title'>{name}</h3>
           <div className="exercise-card-btn-container">
@@ -33,6 +40,7 @@ export default class ExerciseCard extends Component {
             <button className='exercise-card-btn'>Lock</button>
           </div>
         </header>
+
         <div className='exercise-card-stats'>
           <label htmlFor='sets'>Sets</label>
           <input type='text'
@@ -48,7 +56,7 @@ export default class ExerciseCard extends Component {
             disabled={disabled}
             onChange={(e)=>this.updateState(e)}
           />
-          <label htmlFor='other'>{type}</label>
+          <label htmlFor='unit'>{type}</label>
           <input type='text'
             name='unit'
             value={unit}
@@ -56,7 +64,9 @@ export default class ExerciseCard extends Component {
             onChange={(e)=>this.updateState(e)}
           />
           <label htmlFor='other'>{measure}</label>
+
         </div>
+
       </article>
     )
   }
