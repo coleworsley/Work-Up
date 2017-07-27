@@ -13,39 +13,41 @@ export default class WorkoutTab extends Component {
     }
     this.randomize = this.randomize.bind(this);
     this.saveWorkout = this.saveWorkout.bind(this);
-    // this.getWorkoutData = this.getWorkoutData.bind(this);
   }
 
   componentDidMount(){
-    const { fetchAPIExercises, fetchWorkouts, randomizeExercises, exercises: { all }, workouts } = this.props;
-    if (!all.length) {fetchAPIExercises()};
+    const { fetchAPIExercises,
+            fetchWorkouts,
+            randomizeExercises,
+            exercises: { all },
+            workouts,
+            fetchCategories,
+            categories } = this.props;
+    // if (!Object.keys(categories).length) fetchCategories()
+    if (!all.length) fetchAPIExercises()
     if (!workouts.length) fetchWorkouts()
-
-    fetch('https://wger.de/api/v2/exerciseimage/')
-      .then(res => res.json())
-      .then(data => this.setState({imageUrls: data.results}))
-
   }
 
   buildExercises() {
-    const { exercises: {current} } = this.props;
-    return current.map(e => (
-      <ExerciseCardContainer key={e.id} {...e}/>)
-    )
+    const { exercises: {current}, detail } = this.props;
+    return current.map(e => {
+      const active = e.id === detail.id;
+      return <ExerciseCardContainer key={e.id} {...e} active={active}/>
+    })
   }
 
-  buildWorkouts() {
-    const { workouts } = this.props;
-
-    return workouts.length ? workouts.map(e => (
-      <div>
-        <h3>Workout title: {e.title}</h3>
-        <p>Workout description: {e.description}</p>
-        <p>Workout exercises: {e.exercises.map(exercise => <p>{exercise.name}</p>)}</p>
-      </div>
-    ))
-    : null
-  }
+  // buildWorkouts() {
+  //   const { workouts } = this.props;
+  //
+  //   return workouts.length ? workouts.map(e => (
+  //     <div>
+  //       <h3>Workout title: {e.title}</h3>
+  //       <p>Workout description: {e.description}</p>
+  //       <p>Workout exercises: {e.exercises.map(exercise => <p>{exercise.name}</p>)}</p>
+  //     </div>
+  //   ))
+  //   : null
+  // }
 
 
   randomize() {
@@ -72,11 +74,6 @@ export default class WorkoutTab extends Component {
   }
 
   render() {
-    // const imageUrl = !this.state.imageUrls.length
-    //   ? ''
-    //   : this.state.imageUrls[0].image
-
-
     return (
       <main className='workout-tab'>
         <section className='workout-build'>

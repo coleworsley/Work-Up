@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './DetailView.css'
 
 export class DetailView extends Component {
   constructor() {
@@ -30,14 +31,22 @@ export class DetailView extends Component {
       this.setState({index: newIndex});
     }, 2000)
 
-    return <img src={imageUrls[newIndex]} alt=""/>
+    return <img
+      src={imageUrls[newIndex]}
+      alt={`${this.props.detail.name} image`}
+      className='detail-image'
+    />
   }
 
   render() {
-
+    const { name, description } = this.props.detail
     return (
-      <div>
+      <div className='detail-view'>
+        <h3 className='detail-title'>{name}</h3>
         {this.displayImages()}
+        <div className="detail-description"
+             dangerouslySetInnerHTML={{ __html: description }}>
+        </div>
       </div>
     )
   }

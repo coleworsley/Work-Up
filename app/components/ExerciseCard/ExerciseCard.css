@@ -6,23 +6,27 @@
   margin: 10px;
   padding: 5px;
   box-shadow: 0 3px 8px -6px #181818;
+  /*background-color: #909090;*/
   transition: all 0.3s ease-in-out;
   position: relative;
 }
 
 .exercise-card-header {
-  margin: 5px;
   border-bottom: solid 1px #909090;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
 
 .exercise-card-btn {
-  
+  box-shadow: inset 0 0 10px 5px #242323;
+  padding: 1%;
 }
 
+.exercise-card.active {
+  background-color: #3281f6;
+}
 
-/*
 .exercise-card::after {
   content: '';
   position: absolute;
@@ -46,4 +50,4 @@
 .exercise-card:hover::after {
   opacity: 1;
   background-color: #3281f6;
-}*/
+}

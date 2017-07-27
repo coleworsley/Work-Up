@@ -1,5 +1,8 @@
 import { EXERCISES_URL,
-         EXERCISE_IMG_BASE_URL } from '../constants';
+         EXERCISE_IMG_BASE_URL,
+         MUSCLE_URL,
+         EQUIPMENT_URL,
+         EXERCISE_CATEGORY_URL} from '../constants';
 
 
 export const fetchUserSignUp = (body) => {
@@ -89,9 +92,18 @@ export const fetchAPIExercises = (body) => {
     })
     .then(res => res.json())
     .then(exercises => {
-      const { results } = exercises
-      dispatch(pageDataRetrieved(results))
-      dispatch(randomizeExercises(results, Math.min(results.length, 10)))
+
+      Promise.all([
+        fetch(MUSCLE_URL).then(res => res.json()),
+        fetch(EQUIPMENT_URL).then(res => res.json()),
+        fetch(EXERCISE_CATEGORY_URL).then(res => res.json()),
+      ]).then(categories => {
+
+        const { results } = exercises
+        dispatch(addCategories(categories))
+        dispatch(pageDataRetrieved(results, categories))
+        dispatch(randomizeExercises(results, Math.min(results.length, 10)))
+      })
     })
     .catch(error => pageDataFailed(error))
   }
@@ -108,6 +120,26 @@ export const fetchImageUrls = (exercise) => {
       dispatch(showDetail(Object.assign({}, exercise, {imageUrls: urls})))
     })
     .catch(error => console.log(error))
+  }
+}
+
+export const fetchCategories = () => {
+  return (dispatch) => {
+    Promise.all([
+      fetch(MUSCLE_URL).then(res => res.json()),
+      fetch(EQUIPMENT_URL).then(res => res.json()),
+      fetch(EXERCISE_CATEGORY_URL).then(res => res.json()),
+    ])
+    .then(data => {
+      dispatch(addCategories(data))})
+    .catch(error => console.log(error))
+  }
+}
+
+export const addCategories = (array) => {
+  return {
+    type: 'ADD_CATEGORIES',
+    array,
   }
 }
 
@@ -133,10 +165,10 @@ export const pageLoading = (bool) => {
   }
 }
 
-export const pageDataRetrieved = (data) => {
+export const pageDataRetrieved = (exercises, categories) => {
   return {
     type: 'PAGE_FETCH_SUCCESS',
-    data,
+    data: {exercises, categories},
   }
 }
 

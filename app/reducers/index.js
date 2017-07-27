@@ -4,6 +4,7 @@ import { userReducer, userLoading } from './userReducer';
 import { exercises, pageLoading } from './exerciseReducer';
 import { workoutReducer } from './workoutReducer';
 import { detailReducer } from './detailReducer';
+import { categories } from './categories';
 
 
 export default combineReducers({
@@ -13,5 +14,6 @@ export default combineReducers({
   exercises,
   loading: pageLoading,
   workouts: workoutReducer,
-  detail: detailReducer
+  detail: detailReducer,
+  categories,
 });

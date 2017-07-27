@@ -1,9 +1,22 @@
 .workout-tab {
   display: flex;
   flex-direction: row;
+  height: calc(100vh - 60px);
+  overflow-y: scroll;
+  
 }
 
 .workout-popular,
 .workout-build {
   width: 50%;
+}
+
+
+
+.exercise-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+
 }

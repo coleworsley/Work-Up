@@ -42,7 +42,6 @@ function signup(req, res) {
 
 function saveWorkout(req, res) {
   const workout = req.body;
-  console.log(workout);
   db('workouts').where('id', workout.id || 0).select()
   .then(response => {
     if (!response.length) {

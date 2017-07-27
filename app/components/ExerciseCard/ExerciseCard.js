@@ -19,17 +19,19 @@ export default class ExerciseCard extends Component {
     this.setState({ [name]: value })
   }
 
-
   render() {
-    const { id, name, description, fetchImageUrls, showDetail } = this.props;
-    const { sets, reps, unit, measure, type, disabled } = this.state
+    const { id, name, description, fetchImageUrls, showDetail, active } = this.props;
+    const { sets, reps, unit, measure, type, disabled } = this.state;
     return (
-      <article className='exercise-card'
+      <article
+        className={`exercise-card ${active ? 'active' : ''}`}
         onClick={() => fetchImageUrls(this.props)}>
         <header className='exercise-card-header'>
           <h3 className='exercise-card-title'>{name}</h3>
-          <button className='exercise-card-btn'>EDIT</button>
-          <button className='exercise-card-btn'>Lock</button>
+          <div className="exercise-card-btn-container">
+            <button className='exercise-card-btn'>EDIT</button>
+            <button className='exercise-card-btn'>Lock</button>
+          </div>
         </header>
         <div className='exercise-card-stats'>
           <label htmlFor='sets'>Sets</label>
