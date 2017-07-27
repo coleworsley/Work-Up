@@ -3,20 +3,34 @@
   flex-direction: row;
   height: calc(100vh - 60px);
   overflow-y: scroll;
-  
 }
 
 .workout-popular,
 .workout-build {
   width: 50%;
+  padding: 20px;
 }
 
+.workout-popular h1,
+.workout-build h1 {
+  text-align: center;
+}
+
+
+.workout-btn-container {
+
+}
+
+.save-workout-btn,
+.workout-randomize-btn {
+  padding: 5px;
+  background-color: #136EF6;
+  font-size: 18px;
+}
 
 
 .exercise-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px;
-
 }

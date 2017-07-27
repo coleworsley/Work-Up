@@ -24,7 +24,11 @@ export default class ExerciseImage extends Component {
   cycleThrough() {
     const { imageUrls } = this.props;
     const { index } = this.state;
-    const newIndex = (index + 1) >= imageUrls.length ? 0 : index + 1;
+
+    let newIndex = index;
+    if (imageUrls) {
+      newIndex = (index + 1) >= imageUrls.length ? 0 : index + 1;
+    }
 
     this.setState({ index: newIndex })
   }
@@ -34,9 +38,9 @@ export default class ExerciseImage extends Component {
     const { index } = this.state;
 
     if (!imageUrls) {
-      return <p>loading</p>
+      return <p>Loading</p>
     } else if (!imageUrls.length) {
-      return <p>no images found</p>
+      return <p>No images found</p>
     }
 
     return <img src={imageUrls[index]} className='detail-image'/>

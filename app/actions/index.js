@@ -112,14 +112,16 @@ export const fetchAPIExercises = (body) => {
 export const fetchImageUrls = (exercise) => {
   return (dispatch) => {
     dispatch(showDetail(exercise))
-    fetch(EXERCISE_IMG_BASE_URL + exercise.id)
-    .then(res => res.json())
-    .then(data => {
-      const urls = data.results.map(e => e.image);
-      dispatch(imageUrlSuccess({urls, id: exercise.id}))
-      dispatch(showDetail(Object.assign({}, exercise, {imageUrls: urls})))
-    })
-    .catch(error => console.log(error))
+    if (!exercise.imageUrls) {
+      fetch(EXERCISE_IMG_BASE_URL + exercise.id)
+      .then(res => res.json())
+      .then(data => {
+        const urls = data.results.map(e => e.image);
+        dispatch(imageUrlSuccess({urls, id: exercise.id}))
+        dispatch(showDetail(Object.assign({}, exercise, {imageUrls: urls})))
+      })
+      .catch(error => console.log(error))
+    }
   }
 }
 
@@ -224,5 +226,13 @@ export const fetchWorkoutsSuccess = (data) => {
   return {
     type: 'FETCH_WORKOUT_SUCCESS',
     data,
+  }
+}
+
+export const changeExerciseProperty = (exercise, id) => {
+  return {
+    type: 'CHANGE_EXERCISE_PROPERTY',
+    exercise,
+    id
   }
 }

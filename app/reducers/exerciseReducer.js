@@ -1,8 +1,18 @@
 import { randomizeArr } from '../constants';
 
+const defaultExerciseState = {
+  statistics: {
+    sets: 3,
+    reps: 8,
+    type: 'Weight',
+    measure: 'lbs',
+    unit: 180,
+  }
+}
+
 export const exercises = (state={all:[],current:[]}, action) => {
   switch (action.type) {
-    
+
     case 'PAGE_FETCH_SUCCESS':
       const { exercises, categories } = action.data;
       const muscleArray = categories[0].results;
@@ -18,7 +28,7 @@ export const exercises = (state={all:[],current:[]}, action) => {
         })
         const category = categoryArray.find(e => exercise.category)
 
-        return Object.assign(exercise, {muscles, equipment, category})
+        return Object.assign(exercise, {muscles, equipment, category}, defaultExerciseState)
       })
 
       return Object.assign({}, state, { all: newExercises });
@@ -38,6 +48,17 @@ export const exercises = (state={all:[],current:[]}, action) => {
           }),
         })
 
+    case 'CHANGE_EXERCISE_PROPERTY':
+      const { id, exercise } = action;
+
+      const newCurrent = state.current.map(e =>  {
+        if(id === e.id) {
+          const newStatistics = Object.assign({}, e.statistics, exercise)
+          return Object.assign({}, e, { statistics: newStatistics } )
+        }
+        return e
+      })
+      return Object.assign({}, state, { current: newCurrent })
     default:
       return state;
   }

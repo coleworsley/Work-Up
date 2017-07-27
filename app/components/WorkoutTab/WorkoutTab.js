@@ -9,10 +9,13 @@ export default class WorkoutTab extends Component {
     super();
     this.state = {
       listedExercises: [],
-      imageUrls: []
+      imageUrls: [],
+      workout: 'Workout A',
+      description: '',
     }
     this.randomize = this.randomize.bind(this);
     this.saveWorkout = this.saveWorkout.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount(){
@@ -46,7 +49,10 @@ export default class WorkoutTab extends Component {
   //   ))
   //   : null
   // }
-
+  handleChange(e) {
+    const { name, value } = e.target
+    this.setState({[name]: value})
+  }
 
   randomize() {
     const { randomizeExercises, exercises: { all } } = this.props;
@@ -72,10 +78,33 @@ export default class WorkoutTab extends Component {
   }
 
   render() {
+    const { workout, description } = this.state
+
+
     return (
       <main className='workout-tab'>
         <section className='workout-build'>
           <h1>Build Workout</h1>
+          <label htmlFor='workout'>
+            Workout Name:
+          </label>
+            <input
+              type="text"
+              name='workout'
+              value={workout}
+              placeholder='Enter a Workout Name'
+              onChange={(e) => this.handleChange(e)}
+            />
+          <label htmlFor='workout'>
+            Description:
+          </label>
+            <input
+              type="text"
+              name='description'
+              value={description}
+              placeholder='Description Optional'
+              onChange={(e) => this.handleChange(e)}
+            />
           <div className="workout-btn-container">
             <button
               className='workout-randomize-btn'
@@ -94,11 +123,8 @@ export default class WorkoutTab extends Component {
 
         </section>
         <section className='workout-popular'>
-          <h1>Popular Workouts</h1>
+          <h1>Exercise Detail</h1>
           <DetailViewContainer />
-            {/* <img src={imageUrl} alt=""/> */}
-            {/* {this.buildWorkouts()} */}
-
         </section>
       </main>
     )
