@@ -35,7 +35,7 @@ export const exercises = (state={all:[],current:[]}, action) => {
 
     case 'RANDOMIZE_EXERCISES':
       const randomized = randomizeArr(action.data.array, action.data.count);
-      const current = randomized.map(e => Object.assign(e, {popularity: 0}));
+      const current = randomized.map(e => Object.assign(e, {popularity: 1}));
       return Object.assign({}, state, { current: current });
 
     case 'IMAGE_URL_SUCCESS':
@@ -62,6 +62,14 @@ export const exercises = (state={all:[],current:[]}, action) => {
         return e
       })
       return Object.assign({}, state, { current: newCurrent })
+
+    case 'USER_EXERCISES':
+      const newAll = state.all.map(e => {
+        e.history = action.exerciseHistory.filter(exercise => e.id === exercise.api_id)
+
+        return e;
+      })
+      return Object.assign({}, state, {all: newAll})
     default:
       return state;
   }

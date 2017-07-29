@@ -12,12 +12,6 @@ import WorkoutTab from '../WorkoutTab/WorkoutTab';
 export default class App extends Component {
   render() {
     const { user } = this.props;
-    // const user = {
-    //   id: 1,
-    //   first_name: '',
-    //   last_name: '',
-    //   email: '',
-    // }
 
     return (
       <div>

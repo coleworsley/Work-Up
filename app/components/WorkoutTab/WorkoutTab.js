@@ -12,6 +12,7 @@ export default class WorkoutTab extends Component {
       imageUrls: [],
       workout: 'Workout A',
       description: '',
+      randomAmount: 5,
     }
     this.randomize = this.randomize.bind(this);
     this.saveWorkout = this.saveWorkout.bind(this);
@@ -50,13 +51,15 @@ export default class WorkoutTab extends Component {
   //   : null
   // }
   handleChange(e) {
-    const { name, value } = e.target
-    this.setState({[name]: value})
+    const { name, value } = e.target;
+    const newValue = isNaN(parseInt(value)) ? value : parseInt(value)
+
+    this.setState({[name]: newValue})
   }
 
   randomize() {
     const { randomizeExercises, exercises: { all } } = this.props;
-    randomizeExercises(all, 1)
+    randomizeExercises(all, this.state.randomAmount)
   }
 
   saveWorkout() {
@@ -68,9 +71,10 @@ export default class WorkoutTab extends Component {
       popularity: 1,
     },{
       exercises: current.map(e => ({
+        api_id: e.id,
         name: e.name,
         description: e.description,
-        popularity: e.popularity || 0
+        popularity: e.popularity || 1,
       }))
     })
 
@@ -78,7 +82,7 @@ export default class WorkoutTab extends Component {
   }
 
   render() {
-    const { workout, description } = this.state
+    const { workout, description, randomAmount } = this.state
 
     return (
       <main className='workout-tab'>
@@ -107,10 +111,18 @@ export default class WorkoutTab extends Component {
           <div className="workout-btn-container">
             <button
               className='workout-randomize-btn'
+              value={randomAmount}
               onClick={this.randomize}>
               Randomize
             </button>
-            <input type="text"/>
+            <label htmlFor="randomNumber">Exercise Count: </label>
+            <input
+              onChange={(e) => this.handleChange(e)}
+              type="number"
+              name='randomAmount'
+              placeholder='exercises'
+              value={randomAmount}
+            />
             <button
               className="save-workout-btn"
               onClick={this.saveWorkout}>

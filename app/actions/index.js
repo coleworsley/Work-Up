@@ -26,7 +26,10 @@ export const fetchUserSignUp = (body) => {
       if (user.error) {
         dispatch(userLogInFail(user.error))
       } else {
+        debugger
+
         dispatch(userLogInSuccess(user.data))
+        dispatch(fetchUserExercises(user.data.id))
       }
     })
     .catch(err => console.log(err))
@@ -75,13 +78,14 @@ export const fetchUserLogin = (body) => {
         dispatch(userLogInFail(user.data))
       } else {
         dispatch(userLogInSuccess(user.data))
+        dispatch(fetchUserExercises(user.data.id))
       }
     })
     .catch(error => dispatch(userLogInFail(error.message)))
   }
 }
 
-export const fetchAPIExercises = (body) => {
+export const fetchAPIExercises = (user_id) => {
   return (dispatch) => {
     dispatch(pageLoading(true))
 
@@ -92,18 +96,22 @@ export const fetchAPIExercises = (body) => {
     })
     .then(res => res.json())
     .then(exercises => {
+      const { results } = exercises;
 
-      Promise.all([
+      return Promise.all([
         fetch(MUSCLE_URL).then(res => res.json()),
         fetch(EQUIPMENT_URL).then(res => res.json()),
         fetch(EXERCISE_CATEGORY_URL).then(res => res.json()),
-      ]).then(categories => {
-
-        const { results } = exercises
+      ])
+      .then(categories => {
         dispatch(addCategories(categories))
         dispatch(pageDataRetrieved(results, categories))
-        dispatch(randomizeExercises(results, Math.min(results.length, 10)))
       })
+      .then(() => {
+        console.log(user_id);
+        if(user_id) dispatch(fetchUserExercises(user_id))
+      })
+      .then(() => dispatch(randomizeExercises(results, Math.min(results.length, 10))))
     })
     .catch(error => pageDataFailed(error))
   }
@@ -188,7 +196,6 @@ export const randomizeExercises = (array, count) => {
   }
 }
 
-
 export const saveWorkout = (body) => {
   return (dispatch) => {
     fetch('api/v1/workouts', {
@@ -221,6 +228,26 @@ export const fetchWorkouts = () => {
     })
   }
 }
+
+export const fetchUserExercises = (user_id) => {
+  return (dispatch) => {
+    fetch(`api/v1/exercises/${user_id}`)
+    .then(res => res.json())
+    .then(({data}) => {
+      dispatch(userExercises(data))
+    })
+    .catch(error => console.log(error))
+  }
+}
+
+export const userExercises = (exerciseHistory) => {
+  return {
+    type: 'USER_EXERCISES',
+    exerciseHistory: exerciseHistory,
+  }
+}
+
+
 
 export const fetchWorkoutsSuccess = (data) => {
   return {

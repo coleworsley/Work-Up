@@ -61,10 +61,20 @@ function saveWorkout(req, res) {
     }).then(()=> {
       return Promise.all(workout.exercises.map(exercise => {
         saveExercise(exercise).then(exercise_id => {
-          return db('workout_exercises').insert({
+
+          const workoutExercises = db('workout_exercises').insert({
             workout_id: id[0],
             exercise_id: exercise_id[0]
           })
+          const userExercises = db('user_exercises').insert({
+            user_id: workout.user_id,
+            exercise_id: exercise_id[0],
+            api_id: exercise.api_id,
+            count: 1,
+            popularity: exercise.popularity,
+          })
+
+          return Promise.all([workoutExercises, userExercises])
           .then(() => exercise_id[0])
         })
       }))
@@ -79,7 +89,6 @@ function saveWorkout(req, res) {
     data: {message: error.message}
   }))
 }
-
 
 function saveExercise(exercise) {
   return db('exercises')
@@ -112,7 +121,7 @@ function saveExercises(req, res) {
 
 function getAllExercises(req, res) {
   db('exercises')
-  .select('*')
+  .select()
   .then(exercises => res.status(200).json({
     error: false,
     data: exercises
@@ -154,13 +163,27 @@ function getAllWorkouts(req, res) {
   }))
 }
 
+function getUserExercises(req, res) {
+  if (req.params.id) {
+    db('user_exercises').where('user_id', parseInt(req.params.id)).select()
+    .then(exercises => res.status(200).json({
+      error: false,
+      data: exercises,
+    }))
+    .catch(error => res.status(200).json({
+      error: true,
+      data: {message: error.message}
+    }))
+  }
+}
+
 
 
 module.exports = {
   login,
   signup,
   saveExercises,
-  getAllExercises,
+  getUserExercises,
   getAllWorkouts,
   saveWorkout
 };

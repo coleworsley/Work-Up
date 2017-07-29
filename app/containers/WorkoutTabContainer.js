@@ -25,6 +25,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchCategories: () => dispatch(fetchCategories()),
     fetchWorkouts: () => dispatch(fetchWorkouts()),
     fetchImageUrls: (exercise_id) => dispatch(fetchImageUrls(exercise_id)),
+    fetchUserExercises: (user_id) => dispatch(fetchUserExercises(user_id)),
   }
 }
 
