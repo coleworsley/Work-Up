@@ -53,6 +53,9 @@ export const exercises = (state={all:[],current:[]}, action) => {
 
       const newCurrent = state.current.map(e =>  {
         if(id === e.id) {
+          if (Object.keys(exercise)[0] === 'popularity') {
+            return Object.assign({}, e, { popularity: parseInt(exercise.popularity)})
+          }
           const newStatistics = Object.assign({}, e.statistics, exercise)
           return Object.assign({}, e, { statistics: newStatistics } )
         }

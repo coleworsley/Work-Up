@@ -18,29 +18,46 @@ export default class ExerciseCard extends Component {
   }
 
   handleClick (e) {
+    const { changeExerciseProperty, id } = this.props;
     const { name, value } = e.target;
-    this.setState({ [name]: parseInt(value)})
+
+    changeExerciseProperty({popularity: value}, id);
   }
 
   handleChange (e) {
     const { changeExerciseProperty, id } = this.props;
-    const { name, value } = e.target
-    // debugger
-    changeExerciseProperty({[name]: value}, id)
-    // this.setState({ [name]: value })
+    const { name, value } = e.target;
+
+    changeExerciseProperty({[name]: value}, id);
   }
 
   getImages () {
-    const { imageUrls, fetchImageUrls } = this.props;
-    fetchImageUrls(this.props)
+    const { fetchImageUrls } = this.props;
+
+    fetchImageUrls(this.props);
+  }
+
+  popularityClass(popularity) {
+    let className = ''
+    if (popularity < 0) {
+      className = 'unpopular'
+    } else if (popularity > 0) {
+      className = 'popular'
+    } else {
+      className = 'neutral'
+    }
+
+    return className;
   }
 
   render() {
-    const { id, name, description, fetchImageUrls, showDetail, active } = this.props;
+    const { id, name, description, fetchImageUrls, showDetail, active, popularity } = this.props;
     const { sets, reps, unit, measure, type, disabled } = this.props.statistics;
+    const activeClass = active ? 'active' : ''
+
 
     return (
-      <article className={`exercise-card ${active ? 'active' : ''}`}>
+      <article className={`exercise-card ${activeClass} ${this.popularityClass(popularity)}`}>
 
         <header className='exercise-card-header'>
           <h3 className='exercise-card-title'>{name}</h3>

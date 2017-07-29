@@ -12,7 +12,6 @@ const mapDispatchToProps = (dispatch) => {
     fetchImageUrls: (exercise_id) => dispatch(fetchImageUrls(exercise_id)),
     showDetail: (exercise) => dispatch(showDetail(exercise)),
     changeExerciseProperty: (exercise, id) => dispatch(changeExerciseProperty(exercise, id)),
-
   }
 }
 export default connect(null, mapDispatchToProps)(ExerciseCard);
