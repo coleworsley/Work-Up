@@ -63,14 +63,14 @@ export default class WorkoutTab extends Component {
     const { exercises: { current }, saveWorkout, user } = this.props;
     const workout = Object.assign({
       user_id: user.id,
-      title: 'Test Workout',
-      description: 'Test Workout',
+      title: this.state.workout,
+      description: this.state.descrption,
       popularity: 1,
     },{
       exercises: current.map(e => ({
         name: e.name,
         description: e.description,
-        popularity: e.popularity || 1
+        popularity: e.popularity || 0
       }))
     })
 
@@ -79,7 +79,6 @@ export default class WorkoutTab extends Component {
 
   render() {
     const { workout, description } = this.state
-
 
     return (
       <main className='workout-tab'>
@@ -111,6 +110,7 @@ export default class WorkoutTab extends Component {
               onClick={this.randomize}>
               Randomize
             </button>
+            <input type="text"/>
             <button
               className="save-workout-btn"
               onClick={this.saveWorkout}>

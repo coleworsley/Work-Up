@@ -14,9 +14,9 @@ export default class App extends Component {
     const { user } = this.props;
     // const user = {
     //   id: 1,
-    //   first_name: 'Batman',
-    //   last_name: 'Batman',
-    //   email: 'Bruce@Wayne.org',
+    //   first_name: '',
+    //   last_name: '',
+    //   email: '',
     // }
 
     return (
