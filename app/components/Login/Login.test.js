@@ -1,7 +1,7 @@
-import WorkoutTab from './WorkoutTab';
+import Login from './Login';
 // import { shallow, mount } from 'enzyme';
 
-describe('WorkoutTab Component', () => {
+describe('Login Component', () => {
   it('should render', () => {
 
   })

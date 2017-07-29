@@ -1,7 +1,7 @@
-import WorkoutTab from './WorkoutTab';
+import DetailView from './DetailView';
 // import { shallow, mount } from 'enzyme';
 
-describe('WorkoutTab Component', () => {
+describe('DetailView Component', () => {
   it('should render', () => {
 
   })

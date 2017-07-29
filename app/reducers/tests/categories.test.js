@@ -1,7 +1,7 @@
-import WorkoutTab from './WorkoutTab';
+import categories from '../categories';
 // import { shallow, mount } from 'enzyme';
 
-describe('WorkoutTab Component', () => {
+describe('categories reducer', () => {
   it('should render', () => {
 
   })

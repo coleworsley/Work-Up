@@ -1,7 +1,7 @@
-import WorkoutTab from './WorkoutTab';
+import Nav from './Nav';
 // import { shallow, mount } from 'enzyme';
 
-describe('WorkoutTab Component', () => {
+describe('Nav Component', () => {
   it('should render', () => {
 
   })
