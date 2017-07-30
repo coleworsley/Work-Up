@@ -21,7 +21,7 @@ export class DetailView extends Component {
 
     return (
       <div className='detail-view'>
-        <h3 className='detail-title'>{name}</h3>
+        <h3 className='workout-tab-title'>{name}</h3>
         <h4>Category: {category.name}</h4>
         <ExerciseImage imageUrls={imageUrls}/>
         <div className="detail-description"

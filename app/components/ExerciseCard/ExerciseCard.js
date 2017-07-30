@@ -11,7 +11,6 @@ export default class ExerciseCard extends Component {
       measure: 'lbs',
       unit: 180,
       disabled: false,
-
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -31,17 +30,19 @@ export default class ExerciseCard extends Component {
     changeExerciseProperty({[name]: value}, id);
   }
 
-  getImages () {
+  getImages (e) {
     const { fetchImageUrls } = this.props;
 
-    fetchImageUrls(this.props);
+    if (!(e.target.name === 'upvote' || e.target.name ==='downvote')) {
+      fetchImageUrls(this.props);
+    }
   }
 
   popularityClass(popularity) {
     let className = ''
-    if (popularity < 0) {
+    if (popularity < 1) {
       className = 'unpopular'
-    } else if (popularity > 0) {
+    } else if (popularity > 1) {
       className = 'popular'
     } else {
       className = 'neutral'
@@ -55,64 +56,63 @@ export default class ExerciseCard extends Component {
     const { sets, reps, unit, measure, type, disabled } = this.props.statistics;
     const activeClass = active ? 'active' : ''
 
-
     return (
       <article className={`exercise-card ${activeClass} ${this.popularityClass(popularity)}`}>
 
-        <header className='exercise-card-header'>
+        <header className='exercise-card-header' onClick={(e) => this.getImages(e)}>
           <h3 className='exercise-card-title'>{name}</h3>
-          <div className="exercise-card-btn-container">
-            <button
-              name='upvote'
-              value='1'
-              onClick={(e) => this.handleClick(e)}
-              className='exercise-card-btn'>
-              Upvote</button>
-            <button
-              name='downvote'
-              value='-1'
-              onClick={(e) => this.handleClick(e)}
-              className='exercise-card-btn'>
-              Downvote</button>
+          <div className="btn-helper">
+            <div className="exercise-card-btn-container">
+              <button
+                name='upvote'
+                value='2'
+                onClick={(e) => this.handleClick(e)}
+                className='exercise-card-btn'
+                id='upvote'>Upvote
+              </button>
+              <button
+                name='downvote'
+                value='0'
+                onClick={(e) => this.handleClick(e)}
+                className='exercise-card-btn'
+                id='downvote'>Downvote
+              </button>
+            </div>
           </div>
-
-          <button
-            className='exercise-card-show-detail'
-            onClick={() => this.getImages()}>
-            Show Detail
-          </button>
         </header>
 
         <div className='exercise-card-stats'>
-          <label htmlFor='sets'>Sets</label>
-          <input type='text'
-            name='sets'
-            value={sets}
-            disabled={disabled}
-            onChange={(e)=>this.handleChange(e)}
-          />
-          <label htmlFor='reps'>Reps</label>
-          <input type='text'
-            name='reps'
-            value={reps}
-            disabled={disabled}
-            onChange={(e)=>this.handleChange(e)}
-          />
-          <label htmlFor='unit'>{type}</label>
-          <input type='text'
-            name='unit'
-            value={unit}
-            disabled={disabled}
-            onChange={(e)=>this.handleChange(e)}
-          />
-          <select name='' id=''>
-            <option value='lbs'>lbs</option>
-            <option value='kg'>kg</option>
-          </select>
-          <input
-            type="dropdown"
-            value={measure}
-          />
+          <div>
+            <label htmlFor='sets'>Sets</label>
+            <input type='text'
+              name='sets'
+              value={sets}
+              disabled={disabled}
+              onChange={(e)=>this.handleChange(e)}
+            />
+          </div>
+          <div>
+            <label htmlFor='reps'>Reps</label>
+            <input type='text'
+              name='reps'
+              value={reps}
+              disabled={disabled}
+              onChange={(e)=>this.handleChange(e)}
+            />
+          </div>
+          <div>
+            <label htmlFor='unit'>{type}</label>
+            <input type='text'
+              name='unit'
+              value={unit}
+              disabled={disabled}
+              onChange={(e)=>this.handleChange(e)}
+            />
+            <select name='measure' className='select' onChange={this.handleChange}>
+              <option value='lbs'>lbs</option>
+              <option value='kg'>kg</option>
+            </select>
+          </div>
         </div>
 
       </article>

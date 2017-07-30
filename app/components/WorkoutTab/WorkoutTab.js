@@ -87,10 +87,11 @@ export default class WorkoutTab extends Component {
     return (
       <main className='workout-tab'>
         <section className='workout-build'>
-          <h1>Build Workout</h1>
-          <label htmlFor='workout'>
-            Workout Name:
-          </label>
+          <h1 className='workout-tab-title'>Build Workout</h1>
+          <div className="workout-titles">
+            <label htmlFor='workout'>
+              Workout Name:
+            </label>
             <input
               type="text"
               name='workout'
@@ -98,9 +99,9 @@ export default class WorkoutTab extends Component {
               placeholder='Enter a Workout Name'
               onChange={(e) => this.handleChange(e)}
             />
-          <label htmlFor='workout'>
-            Description:
-          </label>
+            <label htmlFor='workout'>
+              Description:
+            </label>
             <input
               type="text"
               name='description'
@@ -108,21 +109,26 @@ export default class WorkoutTab extends Component {
               placeholder='Description Optional'
               onChange={(e) => this.handleChange(e)}
             />
+          </div>
           <div className="workout-btn-container">
-            <button
-              className='workout-randomize-btn'
-              value={randomAmount}
-              onClick={this.randomize}>
-              Randomize
-            </button>
-            <label htmlFor="randomNumber">Exercise Count: </label>
-            <input
-              onChange={(e) => this.handleChange(e)}
-              type="number"
-              name='randomAmount'
-              placeholder='exercises'
-              value={randomAmount}
-            />
+            <div className="randomize">
+              <button
+                className='workout-randomize-btn'
+                value={randomAmount}
+                onClick={this.randomize}>
+                Randomize
+              </button>
+              <label htmlFor="randomNumber">Exercise Count:
+                <input
+                  onChange={(e) => this.handleChange(e)}
+                  type="number"
+                  name='randomAmount'
+                  placeholder='exercises'
+                  value={randomAmount}
+                />
+              </label>
+
+            </div>
             <button
               className="save-workout-btn"
               onClick={this.saveWorkout}>

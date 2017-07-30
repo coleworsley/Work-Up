@@ -31,13 +31,11 @@ const findIndex = (array) => {
 
   for (let i = 0; i < probabilityArray.length; i++) {
     total += probabilityArray[i];
-    console.log('total ', total, 'current prob', probabilityArray[i], 'random num', randomNumber);
     if (total >= randomNumber) return i;
   }
 }
 
 export const randomizeArr = (array, count) => {
-  debugger
   const arr = Object.assign([], array);
   const newArr = [];
 
