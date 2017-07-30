@@ -94,3 +94,12 @@
 .exercise-card:hover {
   transform: scale(1.05, 1.05);
 }
+
+.popular > div,
+.popular > header {
+  background-color: rgba(206, 252, 206, 1);
+}
+.unpopular > div,
+.unpopular > header {
+  background-color: rgba(251, 205, 188, 1);
+}

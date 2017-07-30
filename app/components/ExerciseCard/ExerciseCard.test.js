@@ -1,5 +1,5 @@
-import ExerciseCard from './ExerciseCard';
-// import { shallow, mount } from 'enzyme';
+import ExerciseCard from './ExerciseCard.js';
+import { shallow, mount } from 'enzyme';
 
 describe('ExerciseCard Component', () => {
   it('should render', () => {

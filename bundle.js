@@ -65,13 +65,13 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _reactRedux = __webpack_require__(240);
+	var _reactRedux = __webpack_require__(245);
 	
 	var _reactRouterRedux = __webpack_require__(207);
 	
-	var _reactRouterDom = __webpack_require__(255);
+	var _reactRouterDom = __webpack_require__(260);
 	
-	var _AppContainer = __webpack_require__(282);
+	var _AppContainer = __webpack_require__(287);
 	
 	var _AppContainer2 = _interopRequireDefault(_AppContainer);
 	
@@ -83,7 +83,7 @@
 	  _react2.default.createElement(
 	    _reactRouterRedux.ConnectedRouter,
 	    { history: _store.history },
-	    _react2.default.createElement(_reactRouterDom.Route, { to: '/', component: _AppContainer2.default })
+	    _react2.default.createElement(_reactRouterDom.Route, { path: '/', component: _AppContainer2.default })
 	  )
 	), document.getElementById('main'));
 
@@ -26235,10 +26235,23 @@
 	
 	var _userReducer = __webpack_require__(239);
 	
+	var _exerciseReducer = __webpack_require__(240);
+	
+	var _workoutReducer = __webpack_require__(242);
+	
+	var _detailReducer = __webpack_require__(243);
+	
+	var _categories = __webpack_require__(244);
+	
 	exports.default = (0, _redux.combineReducers)({
 	  router: _reactRouterRedux.routerReducer,
 	  user: _userReducer.userReducer,
-	  userLoading: _userReducer.userLoading
+	  userLoading: _userReducer.userLoading,
+	  exercises: _exerciseReducer.exercises,
+	  loading: _exerciseReducer.pageLoading,
+	  workouts: _workoutReducer.workoutReducer,
+	  detail: _detailReducer.detailReducer,
+	  categories: _categories.categories
 	});
 
 /***/ }),
@@ -26257,6 +26270,8 @@
 	  switch (action.type) {
 	    case 'USER_SUCCESS':
 	      return action.user;
+	    case 'USER_FAIL':
+	      return action.error;
 	    default:
 	      return state;
 	  }
@@ -26280,18 +26295,272 @@
 
 	'use strict';
 	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.pageLoading = exports.exercises = undefined;
+	
+	var _constants = __webpack_require__(241);
+	
+	var defaultExerciseState = {
+	  statistics: {
+	    sets: 3,
+	    reps: 8,
+	    type: 'Weight',
+	    measure: 'lbs',
+	    unit: 180
+	  }
+	};
+	
+	var exercises = exports.exercises = function exercises() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { all: [], current: [] };
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	
+	    case 'PAGE_FETCH_SUCCESS':
+	      var _action$data = action.data,
+	          _exercises = _action$data.exercises,
+	          categories = _action$data.categories;
+	
+	      var muscleArray = categories[0].results;
+	      var equipmentArray = categories[1].results;
+	      var categoryArray = categories[2].results;
+	
+	      var newExercises = _exercises.map(function (exercise) {
+	        var muscles = exercise.muscles.map(function (muscle) {
+	          return muscleArray.find(function (category) {
+	            return category.id === muscle;
+	          });
+	        });
+	        var equipment = exercise.equipment.map(function (e) {
+	          return equipmentArray.find(function (category) {
+	            return category.id === e;
+	          });
+	        });
+	        var category = categoryArray.find(function (e) {
+	          return exercise.category;
+	        });
+	
+	        return Object.assign(exercise, { muscles: muscles, equipment: equipment, category: category }, defaultExerciseState);
+	      });
+	
+	      return Object.assign({}, state, { all: newExercises });
+	
+	    case 'RANDOMIZE_EXERCISES':
+	      var randomized = (0, _constants.randomizeArr)(action.data.array, action.data.count);
+	      var current = randomized.map(function (e) {
+	        return Object.assign(e, { popularity: 1 });
+	      });
+	      return Object.assign({}, state, { current: current });
+	
+	    case 'IMAGE_URL_SUCCESS':
+	      return Object.assign({}, state, {
+	        current: state.current.map(function (exercise) {
+	          return exercise.id === action.data.id ? Object.assign(exercise, { imageUrls: action.data.urls }) : exercise;
+	        })
+	      });
+	
+	    case 'CHANGE_EXERCISE_PROPERTY':
+	      var id = action.id,
+	          exercise = action.exercise;
+	
+	
+	      var newCurrent = state.current.map(function (e) {
+	        if (id === e.id) {
+	          if (Object.keys(exercise)[0] === 'popularity') {
+	            return Object.assign({}, e, { popularity: parseInt(exercise.popularity) });
+	          }
+	          var newStatistics = Object.assign({}, e.statistics, exercise);
+	          return Object.assign({}, e, { statistics: newStatistics });
+	        }
+	        return e;
+	      });
+	      return Object.assign({}, state, { current: newCurrent });
+	
+	    case 'USER_EXERCISES':
+	      var newAll = state.all.map(function (e) {
+	        e.history = action.exerciseHistory.filter(function (exercise) {
+	          return e.id === exercise.api_id;
+	        });
+	
+	        return e;
+	      });
+	      return Object.assign({}, state, { all: newAll });
+	    default:
+	      return state;
+	  }
+	};
+	
+	var pageLoading = exports.pageLoading = function pageLoading() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'PAGE_IS_LOADING':
+	      return action.pageLoading;
+	    default:
+	      return state;
+	  }
+	};
+
+/***/ }),
+/* 241 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	// URLs
+	var EXERCISES_URL = exports.EXERCISES_URL = 'https://wger.de/api/v2/exercise/?format=json&language=2&license_author=wger.de&limit=5';
+	var EXERCISE_IMG_BASE_URL = exports.EXERCISE_IMG_BASE_URL = 'https://wger.de/api/v2/exerciseimage/?format=json&exercise=';
+	var MUSCLE_URL = exports.MUSCLE_URL = 'https://wger.de/api/v2/muscle/';
+	var EQUIPMENT_URL = exports.EQUIPMENT_URL = 'https://wger.de/api/v2/equipment/';
+	var EXERCISE_CATEGORY_URL = exports.EXERCISE_CATEGORY_URL = 'https://wger.de/api/v2/exercisecategory/';
+	
+	// Functions
+	var weightedAverage = function weightedAverage(array) {
+	  return array.map(function (exercise) {
+	    if (exercise.history) {
+	      var probabilityObj = exercise.history.reduce(function (a, b) {
+	        a.popularity += b.popularity;
+	        a.count += b.count;
+	        return a;
+	      }, { popularity: 0, count: 0 });
+	      return Math.min(probabilityObj.popularity / probabilityObj.count, .1);
+	    }
+	    return 1;
+	  });
+	};
+	
+	var findIndex = function findIndex(array) {
+	  var probabilityArray = weightedAverage(array);
+	  var sum = probabilityArray.reduce(function (a, b) {
+	    return a + b;
+	  });
+	  var randomNumber = Math.random() * sum;
+	  var total = 0;
+	
+	  for (var i = 0; i < probabilityArray.length; i++) {
+	    total += probabilityArray[i];
+	    if (total >= randomNumber) return i;
+	  }
+	};
+	
+	var randomizeArr = exports.randomizeArr = function randomizeArr(array, count) {
+	  var arr = Object.assign([], array);
+	  var newArr = [];
+	
+	  for (var i = 0; i < Math.min(array.length, count); i++) {
+	    var index = findIndex(arr);
+	    newArr.push.apply(newArr, _toConsumableArray(arr.splice(index, 1)));
+	  }
+	  return newArr;
+	};
+	
+	var combineArraysAtIndex = exports.combineArraysAtIndex = function combineArraysAtIndex(primaryArray, secondaryArray) {
+	  var length = primaryArray.length + secondaryArray.length;
+	  var newArr = [];
+	
+	  for (var i = 0; i < length; i++) {}
+	};
+
+/***/ }),
+/* 242 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	var workoutReducer = exports.workoutReducer = function workoutReducer() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'SAVE_WORKOUT_SUCCESS':
+	      return [].concat(_toConsumableArray(state), [action.data.data]);
+	    case 'FETCH_WORKOUT_SUCCESS':
+	      return action.data.data;
+	    default:
+	      return state;
+	  }
+	};
+
+/***/ }),
+/* 243 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var detailReducer = exports.detailReducer = function detailReducer() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'SHOW_DETAIL':
+	      return action.exercise;
+	    default:
+	      return state;
+	  }
+	};
+
+/***/ }),
+/* 244 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var categories = exports.categories = function categories() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'ADD_CATEGORIES':
+	      return {
+	        muscle: action.array[0].results,
+	        equipment: action.array[1].results,
+	        exerciseCategory: action.array[2].results
+	      };
+	
+	    default:
+	      return state;
+	  }
+	};
+
+/***/ }),
+/* 245 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
 	exports.__esModule = true;
 	exports.connect = exports.connectAdvanced = exports.createProvider = exports.Provider = undefined;
 	
-	var _Provider = __webpack_require__(241);
+	var _Provider = __webpack_require__(246);
 	
 	var _Provider2 = _interopRequireDefault(_Provider);
 	
-	var _connectAdvanced = __webpack_require__(244);
+	var _connectAdvanced = __webpack_require__(249);
 	
 	var _connectAdvanced2 = _interopRequireDefault(_connectAdvanced);
 	
-	var _connect = __webpack_require__(246);
+	var _connect = __webpack_require__(251);
 	
 	var _connect2 = _interopRequireDefault(_connect);
 	
@@ -26303,7 +26572,7 @@
 	exports.connect = _connect2.default;
 
 /***/ }),
-/* 241 */
+/* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -26317,9 +26586,9 @@
 	
 	var _propTypes2 = _interopRequireDefault(_propTypes);
 	
-	var _PropTypes = __webpack_require__(242);
+	var _PropTypes = __webpack_require__(247);
 	
-	var _warning = __webpack_require__(243);
+	var _warning = __webpack_require__(248);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -26396,7 +26665,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 242 */
+/* 247 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26424,7 +26693,7 @@
 	});
 
 /***/ }),
-/* 243 */
+/* 248 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -26454,7 +26723,7 @@
 	}
 
 /***/ }),
-/* 244 */
+/* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -26475,11 +26744,11 @@
 	
 	var _react = __webpack_require__(2);
 	
-	var _Subscription = __webpack_require__(245);
+	var _Subscription = __webpack_require__(250);
 	
 	var _Subscription2 = _interopRequireDefault(_Subscription);
 	
-	var _PropTypes = __webpack_require__(242);
+	var _PropTypes = __webpack_require__(247);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -26749,7 +27018,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 245 */
+/* 250 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -26847,7 +27116,7 @@
 	exports.default = Subscription;
 
 /***/ }),
-/* 246 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26858,27 +27127,27 @@
 	
 	exports.createConnect = createConnect;
 	
-	var _connectAdvanced = __webpack_require__(244);
+	var _connectAdvanced = __webpack_require__(249);
 	
 	var _connectAdvanced2 = _interopRequireDefault(_connectAdvanced);
 	
-	var _shallowEqual = __webpack_require__(247);
+	var _shallowEqual = __webpack_require__(252);
 	
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 	
-	var _mapDispatchToProps = __webpack_require__(248);
+	var _mapDispatchToProps = __webpack_require__(253);
 	
 	var _mapDispatchToProps2 = _interopRequireDefault(_mapDispatchToProps);
 	
-	var _mapStateToProps = __webpack_require__(251);
+	var _mapStateToProps = __webpack_require__(256);
 	
 	var _mapStateToProps2 = _interopRequireDefault(_mapStateToProps);
 	
-	var _mergeProps = __webpack_require__(252);
+	var _mergeProps = __webpack_require__(257);
 	
 	var _mergeProps2 = _interopRequireDefault(_mergeProps);
 	
-	var _selectorFactory = __webpack_require__(253);
+	var _selectorFactory = __webpack_require__(258);
 	
 	var _selectorFactory2 = _interopRequireDefault(_selectorFactory);
 	
@@ -26980,7 +27249,7 @@
 	exports.default = createConnect();
 
 /***/ }),
-/* 247 */
+/* 252 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -27019,7 +27288,7 @@
 	}
 
 /***/ }),
-/* 248 */
+/* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27031,7 +27300,7 @@
 	
 	var _redux = __webpack_require__(186);
 	
-	var _wrapMapToProps = __webpack_require__(249);
+	var _wrapMapToProps = __webpack_require__(254);
 	
 	function whenMapDispatchToPropsIsFunction(mapDispatchToProps) {
 	  return typeof mapDispatchToProps === 'function' ? (0, _wrapMapToProps.wrapMapToPropsFunc)(mapDispatchToProps, 'mapDispatchToProps') : undefined;
@@ -27052,7 +27321,7 @@
 	exports.default = [whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject];
 
 /***/ }),
-/* 249 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -27062,7 +27331,7 @@
 	exports.getDependsOnOwnProps = getDependsOnOwnProps;
 	exports.wrapMapToPropsFunc = wrapMapToPropsFunc;
 	
-	var _verifyPlainObject = __webpack_require__(250);
+	var _verifyPlainObject = __webpack_require__(255);
 	
 	var _verifyPlainObject2 = _interopRequireDefault(_verifyPlainObject);
 	
@@ -27136,7 +27405,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 250 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27148,7 +27417,7 @@
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _warning = __webpack_require__(243);
+	var _warning = __webpack_require__(248);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -27161,7 +27430,7 @@
 	}
 
 /***/ }),
-/* 251 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27170,7 +27439,7 @@
 	exports.whenMapStateToPropsIsFunction = whenMapStateToPropsIsFunction;
 	exports.whenMapStateToPropsIsMissing = whenMapStateToPropsIsMissing;
 	
-	var _wrapMapToProps = __webpack_require__(249);
+	var _wrapMapToProps = __webpack_require__(254);
 	
 	function whenMapStateToPropsIsFunction(mapStateToProps) {
 	  return typeof mapStateToProps === 'function' ? (0, _wrapMapToProps.wrapMapToPropsFunc)(mapStateToProps, 'mapStateToProps') : undefined;
@@ -27185,7 +27454,7 @@
 	exports.default = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
 
 /***/ }),
-/* 252 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -27199,7 +27468,7 @@
 	exports.whenMergePropsIsFunction = whenMergePropsIsFunction;
 	exports.whenMergePropsIsOmitted = whenMergePropsIsOmitted;
 	
-	var _verifyPlainObject = __webpack_require__(250);
+	var _verifyPlainObject = __webpack_require__(255);
 	
 	var _verifyPlainObject2 = _interopRequireDefault(_verifyPlainObject);
 	
@@ -27249,7 +27518,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 253 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -27259,7 +27528,7 @@
 	exports.pureFinalPropsSelectorFactory = pureFinalPropsSelectorFactory;
 	exports.default = finalPropsSelectorFactory;
 	
-	var _verifySubselectors = __webpack_require__(254);
+	var _verifySubselectors = __webpack_require__(259);
 	
 	var _verifySubselectors2 = _interopRequireDefault(_verifySubselectors);
 	
@@ -27368,7 +27637,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 254 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27376,7 +27645,7 @@
 	exports.__esModule = true;
 	exports.default = verifySubselectors;
 	
-	var _warning = __webpack_require__(243);
+	var _warning = __webpack_require__(248);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -27399,7 +27668,7 @@
 	}
 
 /***/ }),
-/* 255 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27407,55 +27676,55 @@
 	exports.__esModule = true;
 	exports.withRouter = exports.matchPath = exports.Switch = exports.StaticRouter = exports.Router = exports.Route = exports.Redirect = exports.Prompt = exports.NavLink = exports.MemoryRouter = exports.Link = exports.HashRouter = exports.BrowserRouter = undefined;
 	
-	var _BrowserRouter2 = __webpack_require__(256);
+	var _BrowserRouter2 = __webpack_require__(261);
 	
 	var _BrowserRouter3 = _interopRequireDefault(_BrowserRouter2);
 	
-	var _HashRouter2 = __webpack_require__(269);
+	var _HashRouter2 = __webpack_require__(274);
 	
 	var _HashRouter3 = _interopRequireDefault(_HashRouter2);
 	
-	var _Link2 = __webpack_require__(271);
+	var _Link2 = __webpack_require__(276);
 	
 	var _Link3 = _interopRequireDefault(_Link2);
 	
-	var _MemoryRouter2 = __webpack_require__(272);
+	var _MemoryRouter2 = __webpack_require__(277);
 	
 	var _MemoryRouter3 = _interopRequireDefault(_MemoryRouter2);
 	
-	var _NavLink2 = __webpack_require__(273);
+	var _NavLink2 = __webpack_require__(278);
 	
 	var _NavLink3 = _interopRequireDefault(_NavLink2);
 	
-	var _Prompt2 = __webpack_require__(274);
+	var _Prompt2 = __webpack_require__(279);
 	
 	var _Prompt3 = _interopRequireDefault(_Prompt2);
 	
-	var _Redirect2 = __webpack_require__(275);
+	var _Redirect2 = __webpack_require__(280);
 	
 	var _Redirect3 = _interopRequireDefault(_Redirect2);
 	
-	var _Route2 = __webpack_require__(276);
+	var _Route2 = __webpack_require__(281);
 	
 	var _Route3 = _interopRequireDefault(_Route2);
 	
-	var _Router2 = __webpack_require__(277);
+	var _Router2 = __webpack_require__(282);
 	
 	var _Router3 = _interopRequireDefault(_Router2);
 	
-	var _StaticRouter2 = __webpack_require__(278);
+	var _StaticRouter2 = __webpack_require__(283);
 	
 	var _StaticRouter3 = _interopRequireDefault(_StaticRouter2);
 	
-	var _Switch2 = __webpack_require__(279);
+	var _Switch2 = __webpack_require__(284);
 	
 	var _Switch3 = _interopRequireDefault(_Switch2);
 	
-	var _matchPath2 = __webpack_require__(280);
+	var _matchPath2 = __webpack_require__(285);
 	
 	var _matchPath3 = _interopRequireDefault(_matchPath2);
 	
-	var _withRouter2 = __webpack_require__(281);
+	var _withRouter2 = __webpack_require__(286);
 	
 	var _withRouter3 = _interopRequireDefault(_withRouter2);
 	
@@ -27476,7 +27745,7 @@
 	exports.withRouter = _withRouter3.default;
 
 /***/ }),
-/* 256 */
+/* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27495,7 +27764,7 @@
 	
 	var _createBrowserHistory2 = _interopRequireDefault(_createBrowserHistory);
 	
-	var _reactRouter = __webpack_require__(257);
+	var _reactRouter = __webpack_require__(262);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -27540,7 +27809,7 @@
 	exports.default = BrowserRouter;
 
 /***/ }),
-/* 257 */
+/* 262 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27548,39 +27817,39 @@
 	exports.__esModule = true;
 	exports.withRouter = exports.matchPath = exports.Switch = exports.StaticRouter = exports.Router = exports.Route = exports.Redirect = exports.Prompt = exports.MemoryRouter = undefined;
 	
-	var _MemoryRouter2 = __webpack_require__(258);
+	var _MemoryRouter2 = __webpack_require__(263);
 	
 	var _MemoryRouter3 = _interopRequireDefault(_MemoryRouter2);
 	
-	var _Prompt2 = __webpack_require__(260);
+	var _Prompt2 = __webpack_require__(265);
 	
 	var _Prompt3 = _interopRequireDefault(_Prompt2);
 	
-	var _Redirect2 = __webpack_require__(261);
+	var _Redirect2 = __webpack_require__(266);
 	
 	var _Redirect3 = _interopRequireDefault(_Redirect2);
 	
-	var _Route2 = __webpack_require__(262);
+	var _Route2 = __webpack_require__(267);
 	
 	var _Route3 = _interopRequireDefault(_Route2);
 	
-	var _Router2 = __webpack_require__(259);
+	var _Router2 = __webpack_require__(264);
 	
 	var _Router3 = _interopRequireDefault(_Router2);
 	
-	var _StaticRouter2 = __webpack_require__(266);
+	var _StaticRouter2 = __webpack_require__(271);
 	
 	var _StaticRouter3 = _interopRequireDefault(_StaticRouter2);
 	
-	var _Switch2 = __webpack_require__(267);
+	var _Switch2 = __webpack_require__(272);
 	
 	var _Switch3 = _interopRequireDefault(_Switch2);
 	
-	var _matchPath2 = __webpack_require__(263);
+	var _matchPath2 = __webpack_require__(268);
 	
 	var _matchPath3 = _interopRequireDefault(_matchPath2);
 	
-	var _withRouter2 = __webpack_require__(268);
+	var _withRouter2 = __webpack_require__(273);
 	
 	var _withRouter3 = _interopRequireDefault(_withRouter2);
 	
@@ -27597,7 +27866,7 @@
 	exports.withRouter = _withRouter3.default;
 
 /***/ }),
-/* 258 */
+/* 263 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27616,7 +27885,7 @@
 	
 	var _createMemoryHistory2 = _interopRequireDefault(_createMemoryHistory);
 	
-	var _Router = __webpack_require__(259);
+	var _Router = __webpack_require__(264);
 	
 	var _Router2 = _interopRequireDefault(_Router);
 	
@@ -27663,7 +27932,7 @@
 	exports.default = MemoryRouter;
 
 /***/ }),
-/* 259 */
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27787,7 +28056,7 @@
 	exports.default = Router;
 
 /***/ }),
-/* 260 */
+/* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27876,7 +28145,7 @@
 	exports.default = Prompt;
 
 /***/ }),
-/* 261 */
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27965,7 +28234,7 @@
 	exports.default = Redirect;
 
 /***/ }),
-/* 262 */
+/* 267 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27986,7 +28255,7 @@
 	
 	var _propTypes2 = _interopRequireDefault(_propTypes);
 	
-	var _matchPath = __webpack_require__(263);
+	var _matchPath = __webpack_require__(268);
 	
 	var _matchPath2 = _interopRequireDefault(_matchPath);
 	
@@ -28115,14 +28384,14 @@
 	exports.default = Route;
 
 /***/ }),
-/* 263 */
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _pathToRegexp = __webpack_require__(264);
+	var _pathToRegexp = __webpack_require__(269);
 	
 	var _pathToRegexp2 = _interopRequireDefault(_pathToRegexp);
 	
@@ -28195,10 +28464,10 @@
 	exports.default = matchPath;
 
 /***/ }),
-/* 264 */
+/* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var isarray = __webpack_require__(265)
+	var isarray = __webpack_require__(270)
 	
 	/**
 	 * Expose `pathToRegexp`.
@@ -28627,7 +28896,7 @@
 
 
 /***/ }),
-/* 265 */
+/* 270 */
 /***/ (function(module, exports) {
 
 	module.exports = Array.isArray || function (arr) {
@@ -28636,7 +28905,7 @@
 
 
 /***/ }),
-/* 266 */
+/* 271 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28659,7 +28928,7 @@
 	
 	var _PathUtils = __webpack_require__(217);
 	
-	var _Router = __webpack_require__(259);
+	var _Router = __webpack_require__(264);
 	
 	var _Router2 = _interopRequireDefault(_Router);
 	
@@ -28818,7 +29087,7 @@
 	exports.default = StaticRouter;
 
 /***/ }),
-/* 267 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28837,7 +29106,7 @@
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
-	var _matchPath = __webpack_require__(263);
+	var _matchPath = __webpack_require__(268);
 	
 	var _matchPath2 = _interopRequireDefault(_matchPath);
 	
@@ -28910,7 +29179,7 @@
 	exports.default = Switch;
 
 /***/ }),
-/* 268 */
+/* 273 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28931,7 +29200,7 @@
 	
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 	
-	var _Route = __webpack_require__(262);
+	var _Route = __webpack_require__(267);
 	
 	var _Route2 = _interopRequireDefault(_Route);
 	
@@ -28964,7 +29233,7 @@
 	exports.default = withRouter;
 
 /***/ }),
-/* 269 */
+/* 274 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28979,11 +29248,11 @@
 	
 	var _propTypes2 = _interopRequireDefault(_propTypes);
 	
-	var _createHashHistory = __webpack_require__(270);
+	var _createHashHistory = __webpack_require__(275);
 	
 	var _createHashHistory2 = _interopRequireDefault(_createHashHistory);
 	
-	var _reactRouter = __webpack_require__(257);
+	var _reactRouter = __webpack_require__(262);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -29027,7 +29296,7 @@
 	exports.default = HashRouter;
 
 /***/ }),
-/* 270 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29356,7 +29625,7 @@
 	exports.default = createHashHistory;
 
 /***/ }),
-/* 271 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29463,14 +29732,14 @@
 	exports.default = Link;
 
 /***/ }),
-/* 272 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _reactRouter = __webpack_require__(257);
+	var _reactRouter = __webpack_require__(262);
 	
 	Object.defineProperty(exports, 'default', {
 	  enumerable: true,
@@ -29480,7 +29749,7 @@
 	});
 
 /***/ }),
-/* 273 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29499,9 +29768,9 @@
 	
 	var _propTypes2 = _interopRequireDefault(_propTypes);
 	
-	var _reactRouter = __webpack_require__(257);
+	var _reactRouter = __webpack_require__(262);
 	
-	var _Link = __webpack_require__(271);
+	var _Link = __webpack_require__(276);
 	
 	var _Link2 = _interopRequireDefault(_Link);
 	
@@ -29565,91 +29834,6 @@
 	exports.default = NavLink;
 
 /***/ }),
-/* 274 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	
-	var _reactRouter = __webpack_require__(257);
-	
-	Object.defineProperty(exports, 'default', {
-	  enumerable: true,
-	  get: function get() {
-	    return _reactRouter.Prompt;
-	  }
-	});
-
-/***/ }),
-/* 275 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	
-	var _reactRouter = __webpack_require__(257);
-	
-	Object.defineProperty(exports, 'default', {
-	  enumerable: true,
-	  get: function get() {
-	    return _reactRouter.Redirect;
-	  }
-	});
-
-/***/ }),
-/* 276 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	
-	var _reactRouter = __webpack_require__(257);
-	
-	Object.defineProperty(exports, 'default', {
-	  enumerable: true,
-	  get: function get() {
-	    return _reactRouter.Route;
-	  }
-	});
-
-/***/ }),
-/* 277 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	
-	var _reactRouter = __webpack_require__(257);
-	
-	Object.defineProperty(exports, 'default', {
-	  enumerable: true,
-	  get: function get() {
-	    return _reactRouter.Router;
-	  }
-	});
-
-/***/ }),
-/* 278 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	
-	var _reactRouter = __webpack_require__(257);
-	
-	Object.defineProperty(exports, 'default', {
-	  enumerable: true,
-	  get: function get() {
-	    return _reactRouter.StaticRouter;
-	  }
-	});
-
-/***/ }),
 /* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -29657,12 +29841,12 @@
 	
 	exports.__esModule = true;
 	
-	var _reactRouter = __webpack_require__(257);
+	var _reactRouter = __webpack_require__(262);
 	
 	Object.defineProperty(exports, 'default', {
 	  enumerable: true,
 	  get: function get() {
-	    return _reactRouter.Switch;
+	    return _reactRouter.Prompt;
 	  }
 	});
 
@@ -29674,12 +29858,12 @@
 	
 	exports.__esModule = true;
 	
-	var _reactRouter = __webpack_require__(257);
+	var _reactRouter = __webpack_require__(262);
 	
 	Object.defineProperty(exports, 'default', {
 	  enumerable: true,
 	  get: function get() {
-	    return _reactRouter.matchPath;
+	    return _reactRouter.Redirect;
 	  }
 	});
 
@@ -29691,12 +29875,12 @@
 	
 	exports.__esModule = true;
 	
-	var _reactRouter = __webpack_require__(257);
+	var _reactRouter = __webpack_require__(262);
 	
 	Object.defineProperty(exports, 'default', {
 	  enumerable: true,
 	  get: function get() {
-	    return _reactRouter.withRouter;
+	    return _reactRouter.Route;
 	  }
 	});
 
@@ -29706,17 +29890,102 @@
 
 	'use strict';
 	
+	exports.__esModule = true;
+	
+	var _reactRouter = __webpack_require__(262);
+	
+	Object.defineProperty(exports, 'default', {
+	  enumerable: true,
+	  get: function get() {
+	    return _reactRouter.Router;
+	  }
+	});
+
+/***/ }),
+/* 283 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	var _reactRouter = __webpack_require__(262);
+	
+	Object.defineProperty(exports, 'default', {
+	  enumerable: true,
+	  get: function get() {
+	    return _reactRouter.StaticRouter;
+	  }
+	});
+
+/***/ }),
+/* 284 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	var _reactRouter = __webpack_require__(262);
+	
+	Object.defineProperty(exports, 'default', {
+	  enumerable: true,
+	  get: function get() {
+	    return _reactRouter.Switch;
+	  }
+	});
+
+/***/ }),
+/* 285 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	var _reactRouter = __webpack_require__(262);
+	
+	Object.defineProperty(exports, 'default', {
+	  enumerable: true,
+	  get: function get() {
+	    return _reactRouter.matchPath;
+	  }
+	});
+
+/***/ }),
+/* 286 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	var _reactRouter = __webpack_require__(262);
+	
+	Object.defineProperty(exports, 'default', {
+	  enumerable: true,
+	  get: function get() {
+	    return _reactRouter.withRouter;
+	  }
+	});
+
+/***/ }),
+/* 287 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	var _reactRedux = __webpack_require__(240);
+	var _reactRedux = __webpack_require__(245);
 	
-	var _App = __webpack_require__(283);
+	var _App = __webpack_require__(288);
 	
 	var _App2 = _interopRequireDefault(_App);
 	
-	var _actions = __webpack_require__(293);
+	var _actions = __webpack_require__(300);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -29735,7 +30004,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(_App2.default);
 
 /***/ }),
-/* 283 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29750,19 +30019,27 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _NavContainer = __webpack_require__(284);
+	var _reactRouterDom = __webpack_require__(260);
+	
+	var _NavContainer = __webpack_require__(289);
 	
 	var _NavContainer2 = _interopRequireDefault(_NavContainer);
 	
-	var _LoginContainer = __webpack_require__(291);
+	var _LoginContainer = __webpack_require__(296);
 	
 	var _LoginContainer2 = _interopRequireDefault(_LoginContainer);
 	
-	var _Dashboard = __webpack_require__(294);
+	var _WorkoutTabContainer = __webpack_require__(301);
+	
+	var _WorkoutTabContainer2 = _interopRequireDefault(_WorkoutTabContainer);
+	
+	var _Dashboard = __webpack_require__(316);
 	
 	var _Dashboard2 = _interopRequireDefault(_Dashboard);
 	
-	var _reactRouterDom = __webpack_require__(255);
+	var _WorkoutTab = __webpack_require__(302);
+	
+	var _WorkoutTab2 = _interopRequireDefault(_WorkoutTab);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -29791,13 +30068,11 @@
 	        'div',
 	        null,
 	        _react2.default.createElement(_reactRouterDom.Route, { path: '/', render: function render(props) {
-	            if (Object.keys(user).length <= 0) {
-	              return _react2.default.createElement(_reactRouterDom.Redirect, { to: '/login' });
-	            }
-	            return _react2.default.createElement(_NavContainer2.default, props);
-	          } }),
+	            return !user.id ? _react2.default.createElement(_reactRouterDom.Redirect, { to: '/login' }) : _react2.default.createElement(_NavContainer2.default, props);
+	          }
+	        }),
 	        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/login', component: _LoginContainer2.default }),
-	        _react2.default.createElement(_reactRouterDom.Route, { path: '/dashboard', component: _Dashboard2.default })
+	        _react2.default.createElement(_reactRouterDom.Route, { path: '/workouts', component: _WorkoutTabContainer2.default })
 	      );
 	    }
 	  }]);
@@ -29808,7 +30083,7 @@
 	exports.default = App;
 
 /***/ }),
-/* 284 */
+/* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29817,9 +30092,9 @@
 	  value: true
 	});
 	
-	var _reactRedux = __webpack_require__(240);
+	var _reactRedux = __webpack_require__(245);
 	
-	var _Nav = __webpack_require__(285);
+	var _Nav = __webpack_require__(290);
 	
 	var _Nav2 = _interopRequireDefault(_Nav);
 	
@@ -29834,7 +30109,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(_Nav2.default);
 
 /***/ }),
-/* 285 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29849,7 +30124,9 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	__webpack_require__(286);
+	__webpack_require__(291);
+	
+	var _reactRouterDom = __webpack_require__(260);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -29895,25 +30172,25 @@
 	        ),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'nab-link-container' },
+	          { className: 'nav-link-container' },
 	          _react2.default.createElement(
-	            'button',
-	            { className: 'nav-link' },
+	            _reactRouterDom.Link,
+	            { to: '/dashboard', className: 'nav-link' },
 	            'Dashboard'
 	          ),
 	          _react2.default.createElement(
-	            'button',
-	            { className: 'nav-link' },
+	            _reactRouterDom.Link,
+	            { to: '/workouts', className: 'nav-link' },
 	            'Workouts'
 	          ),
 	          _react2.default.createElement(
-	            'button',
-	            { className: 'nav-link' },
+	            _reactRouterDom.Link,
+	            { to: '/exercises', className: 'nav-link' },
 	            'Exercises'
 	          )
 	        ),
 	        _react2.default.createElement(
-	          'h1',
+	          'h3',
 	          { className: 'nav-username' },
 	          'Welcome: ',
 	          first_name
@@ -29928,13 +30205,13 @@
 	exports.default = Nav;
 
 /***/ }),
-/* 286 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(287);
+	var content = __webpack_require__(292);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -29942,7 +30219,7 @@
 	var options = {}
 	options.transform = transform
 	// add the styles to the DOM
-	var update = __webpack_require__(289)(content, options);
+	var update = __webpack_require__(294)(content, options);
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -29959,21 +30236,21 @@
 	}
 
 /***/ }),
-/* 287 */
+/* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(288)(undefined);
+	exports = module.exports = __webpack_require__(293)(undefined);
 	// imports
 	
 	
 	// module
-	exports.push([module.id, ".nav-bar {\n  display: flex;\n}\n", ""]);
+	exports.push([module.id, ".nav-bar {\n  display: flex;\n  justify-content: space-between;\n  background: #2A2A2A;\n  box-shadow: 0px 3px 5px rgba(100, 100, 100, 0.49);\n  padding: 10px 20px 0;\n  align-items: flex-end;\n  height: 60px;\n}\n\n.nav-title,\n.nav-link,\n.nav-username {\n  color: #eeeeee;\n  padding-bottom: 10px;\n}\n\n.title {\n  font-weight: 300;\n}\n\n.title-span {\n  color: #136EF6;\n  text-transform: uppercase;\n  font-weight: 700;\n}\n\n.nav-link-container {\n  width: 40%;\n  display: flex;\n  justify-content: space-around;\n}\n\n.nav-link {\n  color: #eeeeee;\n  font-size: 16px;\n  padding: 10px;\n  margin: 0 15px;\n  border-radius: 5px 5px 0 0;\n  border-bottom: solid 2px transparent;\n  cursor: pointer;\n}\n\n.nav-link:visited {\n  color: #eeeeee;\n}\n\n.nav-link:hover {\n  border-color: #136EF6;\n  background-color: #373636;\n}\n", ""]);
 	
 	// exports
 
 
 /***/ }),
-/* 288 */
+/* 293 */
 /***/ (function(module, exports) {
 
 	/*
@@ -30055,7 +30332,7 @@
 
 
 /***/ }),
-/* 289 */
+/* 294 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/*
@@ -30101,7 +30378,7 @@
 	var	singletonCounter = 0;
 	var	stylesInsertedAtTop = [];
 	
-	var	fixUrls = __webpack_require__(290);
+	var	fixUrls = __webpack_require__(295);
 	
 	module.exports = function(list, options) {
 		if (false) {
@@ -30414,7 +30691,7 @@
 
 
 /***/ }),
-/* 290 */
+/* 295 */
 /***/ (function(module, exports) {
 
 	
@@ -30509,7 +30786,7 @@
 
 
 /***/ }),
-/* 291 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30518,19 +30795,20 @@
 	  value: true
 	});
 	
-	var _reactRedux = __webpack_require__(240);
+	var _reactRedux = __webpack_require__(245);
 	
-	var _Login = __webpack_require__(292);
+	var _Login = __webpack_require__(297);
 	
 	var _Login2 = _interopRequireDefault(_Login);
 	
-	var _actions = __webpack_require__(293);
+	var _actions = __webpack_require__(300);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
-	    user: state.user
+	    user: state.user,
+	    loading: state.userLoading
 	  };
 	};
 	
@@ -30548,7 +30826,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Login2.default);
 
 /***/ }),
-/* 292 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30562,6 +30840,8 @@
 	var _react = __webpack_require__(2);
 	
 	var _react2 = _interopRequireDefault(_react);
+	
+	__webpack_require__(298);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -30584,7 +30864,8 @@
 	  login: {
 	    email: '',
 	    password: ''
-	  }
+	  },
+	  error: ''
 	};
 	
 	var Login = function (_Component) {
@@ -30647,6 +30928,7 @@
 	      var _this2 = this;
 	
 	      return _react2.default.createElement('input', {
+	        className: 'login-input',
 	        key: field,
 	        type: this.assignType(field),
 	        name: field,
@@ -30669,12 +30951,14 @@
 	  }, {
 	    key: 'switchStatus',
 	    value: function switchStatus() {
+	      var _setState2;
+	
 	      var status = this.state.status;
 	
 	      var newStatus = status === 'login' ? 'signup' : 'login';
-	      this.setState(_defineProperty({
+	      this.setState((_setState2 = {
 	        status: newStatus
-	      }, status, initialState[status]));
+	      }, _defineProperty(_setState2, status, initialState[status]), _defineProperty(_setState2, 'error', ''), _setState2));
 	    }
 	  }, {
 	    key: 'buttonText',
@@ -30684,14 +30968,18 @@
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(np) {
-	      if (Object.keys(np.user).length > 0) {
-	        np.history.push('/dashboard');
-	      }
+	      var error = np.user.error ? np.user.error : '';
+	
+	      // TODO: change workouts to dashboard when complete
+	      if (np.user.id) np.history.push('/workouts');
+	      this.setState({ error: error.detail || error });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var status = this.state.status;
+	      var _state2 = this.state,
+	          status = _state2.status,
+	          error = _state2.error;
 	
 	
 	      return _react2.default.createElement(
@@ -30712,14 +31000,21 @@
 	          { className: 'login-card' },
 	          _react2.default.createElement(
 	            'h3',
-	            null,
+	            { className: 'login-status' },
 	            status
 	          ),
 	          this.buildInputs(status),
 	          _react2.default.createElement(
 	            'button',
-	            { onClick: this.handleSubmit },
+	            {
+	              className: 'login-submit-btn',
+	              onClick: this.handleSubmit },
 	            'Submit'
+	          ),
+	          _react2.default.createElement(
+	            'p',
+	            { className: 'login-error-text' },
+	            error
 	          )
 	        ),
 	        _react2.default.createElement(
@@ -30743,14 +31038,63 @@
 	exports.default = Login;
 
 /***/ }),
-/* 293 */
-/***/ (function(module, exports) {
+/* 298 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(299);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// Prepare cssTransformation
+	var transform;
+	
+	var options = {}
+	options.transform = transform
+	// add the styles to the DOM
+	var update = __webpack_require__(294)(content, options);
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../../node_modules/css-loader/index.js!./Login.css", function() {
+				var newContent = require("!!../../../node_modules/css-loader/index.js!./Login.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ }),
+/* 299 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(293)(undefined);
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".login-container {\n  height: 100vh;\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  background: url('/assets/images/gym.jpg');\n  background-repeat: no-repeat;\n  background-size: cover;\n  background-position: center;\n}\n\n.login-title {\n  margin-bottom: 20px;\n  font-size: 40px;\n  color: #fff;\n  text-shadow: 3px 3px 5px #9f9f9f;\n}\n\n.login-title-span {\n  text-shadow: 3px 3px 5px #2a389c;\n}\n\n.login-card {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: space-around;\n  min-height: 40%;\n  width: 350px;\n  padding: 20px;\n  margin-bottom: 20px;\n  background: rgba(232, 232, 232, 0.88);\n  border-radius: 10px;\n  box-shadow: 0 10px 6px -6px #181818;\n}\n\n.login-status {\n  text-transform: capitalize;\n  font-size: 24px;\n}\n\n.login-input {\n  font-size: 20px;\n  padding: 5px;\n  border: solid 1px #777877;\n  min-width: 300px;\n  background-color: #EEE;\n  border-radius: 5px;\n  box-shadow: 0 2px 4px 0 #C7C7C7 inset;\n}\n\n.login-input:focus {\n  border-color: #136EF6;\n}\n\n.login-submit-btn {\n  font-size: 18px;\n  color: #fff;\n  background-color: #136EF6;\n  opacity: 80%;\n  padding: 5px;\n  border-radius: 10px;\n  box-shadow: 0 10px 6px -6px #000229;\n  transition:all 0.8s, color 0.3s 0.3s;\n  box-shadow:\n}\n\n.login-submit-btn:hover {\n  box-shadow: 0 10px 6px -6px #181818, 0 0 0 10px #043d93 inset, 0 0 0 150px rgba(1, 13, 77, 0.5) inset;\n  opacity: 100%;\n  transform: scale(1.05);\n}\n\n.login-toggle-btn {\n  color: #136EF6;\n  text-decoration: underline;\n  text-shadow: 3px 3px 5px #000000;\n  font-size: 16px;\n}\n", ""]);
+	
+	// exports
+
+
+/***/ }),
+/* 300 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.changeExerciseProperty = exports.fetchWorkoutsSuccess = exports.userExercises = exports.fetchUserExercises = exports.fetchWorkouts = exports.saveWorkoutSuccess = exports.saveWorkout = exports.randomizeExercises = exports.pageDataFailed = exports.pageDataRetrieved = exports.pageLoading = exports.imageUrlSuccess = exports.showDetail = exports.addCategories = exports.fetchCategories = exports.fetchImageUrls = exports.fetchAPIExercises = exports.fetchUserLogin = exports.userLogInFail = exports.userLogInSuccess = exports.userLoading = exports.fetchUserSignUp = undefined;
+	
+	var _constants = __webpack_require__(241);
+	
 	var fetchUserSignUp = exports.fetchUserSignUp = function fetchUserSignUp(body) {
 	  return function (dispatch) {
 	    dispatch(userLoading(true));
@@ -30767,7 +31111,15 @@
 	    }).then(function (res) {
 	      return res.json();
 	    }).then(function (user) {
-	      dispatch(userSignUpSuccess(user));
+	      console.log(user);
+	      if (user.error) {
+	        dispatch(userLogInFail(user.error));
+	      } else {
+	        debugger;
+	
+	        dispatch(userLogInSuccess(user.data));
+	        dispatch(fetchUserExercises(user.data.id));
+	      }
 	    }).catch(function (err) {
 	      return console.log(err);
 	    });
@@ -30781,23 +31133,22 @@
 	  };
 	};
 	
-	var userSignUpSuccess = exports.userSignUpSuccess = function userSignUpSuccess(user) {
+	var userLogInSuccess = exports.userLogInSuccess = function userLogInSuccess(user) {
 	  return {
 	    type: 'USER_SUCCESS',
 	    user: user
 	  };
 	};
 	
-	// export const userFail = (user) => {
-	//   return {
-	//     type: 'USER_SUCCESS',
-	//     user,
-	//   }
-	// }
+	var userLogInFail = exports.userLogInFail = function userLogInFail(error) {
+	  return {
+	    type: 'USER_FAIL',
+	    error: error
+	  };
+	};
 	
 	var fetchUserLogin = exports.fetchUserLogin = function fetchUserLogin(body) {
 	  return function (dispatch) {
-	    console.log(body);
 	    dispatch(userLoading(true));
 	
 	    fetch('api/v1/login', {
@@ -30811,16 +31162,1246 @@
 	      return res;
 	    }).then(function (res) {
 	      return res.json();
-	    }).then(function (data) {
-	      dispatch(userSignUpSuccess(data));
-	    }).catch(function (err) {
-	      return console.log(err);
+	    }).then(function (user) {
+	      if (user.error) {
+	        dispatch(userLogInFail(user.data));
+	      } else {
+	        dispatch(userLogInSuccess(user.data));
+	        dispatch(fetchUserExercises(user.data.id));
+	      }
+	    }).catch(function (error) {
+	      return dispatch(userLogInFail(error.message));
 	    });
+	  };
+	};
+	
+	var fetchAPIExercises = exports.fetchAPIExercises = function fetchAPIExercises(user_id) {
+	  return function (dispatch) {
+	    dispatch(pageLoading(true));
+	
+	    fetch(_constants.EXERCISES_URL).then(function (res) {
+	      dispatch(pageLoading(false));
+	      return res;
+	    }).then(function (res) {
+	      return res.json();
+	    }).then(function (exercises) {
+	      var results = exercises.results;
+	
+	
+	      return Promise.all([fetch(_constants.MUSCLE_URL).then(function (res) {
+	        return res.json();
+	      }), fetch(_constants.EQUIPMENT_URL).then(function (res) {
+	        return res.json();
+	      }), fetch(_constants.EXERCISE_CATEGORY_URL).then(function (res) {
+	        return res.json();
+	      })]).then(function (categories) {
+	        dispatch(addCategories(categories));
+	        dispatch(pageDataRetrieved(results, categories));
+	      }).then(function () {
+	        console.log(user_id);
+	        if (user_id) dispatch(fetchUserExercises(user_id));
+	      }).then(function () {
+	        return dispatch(randomizeExercises(results, Math.min(results.length, 10)));
+	      });
+	    }).catch(function (error) {
+	      return pageDataFailed(error);
+	    });
+	  };
+	};
+	
+	var fetchImageUrls = exports.fetchImageUrls = function fetchImageUrls(exercise) {
+	  return function (dispatch) {
+	    dispatch(showDetail(exercise));
+	    if (!exercise.imageUrls) {
+	      fetch(_constants.EXERCISE_IMG_BASE_URL + exercise.id).then(function (res) {
+	        return res.json();
+	      }).then(function (data) {
+	        var urls = data.results.map(function (e) {
+	          return e.image;
+	        });
+	        dispatch(imageUrlSuccess({ urls: urls, id: exercise.id }));
+	        dispatch(showDetail(Object.assign({}, exercise, { imageUrls: urls })));
+	      }).catch(function (error) {
+	        return console.log(error);
+	      });
+	    }
+	  };
+	};
+	
+	var fetchCategories = exports.fetchCategories = function fetchCategories() {
+	  return function (dispatch) {
+	    Promise.all([fetch(_constants.MUSCLE_URL).then(function (res) {
+	      return res.json();
+	    }), fetch(_constants.EQUIPMENT_URL).then(function (res) {
+	      return res.json();
+	    }), fetch(_constants.EXERCISE_CATEGORY_URL).then(function (res) {
+	      return res.json();
+	    })]).then(function (data) {
+	      dispatch(addCategories(data));
+	    }).catch(function (error) {
+	      return console.log(error);
+	    });
+	  };
+	};
+	
+	var addCategories = exports.addCategories = function addCategories(array) {
+	  return {
+	    type: 'ADD_CATEGORIES',
+	    array: array
+	  };
+	};
+	
+	var showDetail = exports.showDetail = function showDetail(exercise) {
+	  return {
+	    type: 'SHOW_DETAIL',
+	    exercise: exercise
+	  };
+	};
+	
+	var imageUrlSuccess = exports.imageUrlSuccess = function imageUrlSuccess(data) {
+	  return {
+	    type: 'IMAGE_URL_SUCCESS',
+	    data: data
+	  };
+	};
+	
+	var pageLoading = exports.pageLoading = function pageLoading(bool) {
+	  return {
+	    type: 'PAGE_IS_LOADING',
+	    pageLoading: bool
+	  };
+	};
+	
+	var pageDataRetrieved = exports.pageDataRetrieved = function pageDataRetrieved(exercises, categories) {
+	  return {
+	    type: 'PAGE_FETCH_SUCCESS',
+	    data: { exercises: exercises, categories: categories }
+	  };
+	};
+	
+	var pageDataFailed = exports.pageDataFailed = function pageDataFailed(error) {
+	  return {
+	    type: 'PAGE_FETCH_FAIL',
+	    error: error
+	  };
+	};
+	
+	var randomizeExercises = exports.randomizeExercises = function randomizeExercises(array, count) {
+	  return {
+	    type: 'RANDOMIZE_EXERCISES',
+	    data: { array: array, count: count }
+	  };
+	};
+	
+	var saveWorkout = exports.saveWorkout = function saveWorkout(body) {
+	  return function (dispatch) {
+	    fetch('api/v1/workouts', {
+	      method: 'POST',
+	      headers: {
+	        'Content-Type': 'application/json'
+	      },
+	      body: JSON.stringify(body)
+	    }).then(function (res) {
+	      return res.json();
+	    }).then(function (data) {
+	      dispatch(saveWorkoutSuccess(data));
+	    });
+	  };
+	};
+	
+	var saveWorkoutSuccess = exports.saveWorkoutSuccess = function saveWorkoutSuccess(data) {
+	  return {
+	    type: 'SAVE_WORKOUT_SUCCESS',
+	    data: data
+	  };
+	};
+	
+	var fetchWorkouts = exports.fetchWorkouts = function fetchWorkouts() {
+	  return function (dispatch) {
+	    fetch('api/v1/workouts').then(function (res) {
+	      return res.json();
+	    }).then(function (data) {
+	      dispatch(fetchWorkoutsSuccess(data));
+	    });
+	  };
+	};
+	
+	var fetchUserExercises = exports.fetchUserExercises = function fetchUserExercises(user_id) {
+	  return function (dispatch) {
+	    fetch('api/v1/exercises/' + user_id).then(function (res) {
+	      return res.json();
+	    }).then(function (_ref) {
+	      var data = _ref.data;
+	
+	      dispatch(userExercises(data));
+	    }).catch(function (error) {
+	      return console.log(error);
+	    });
+	  };
+	};
+	
+	var userExercises = exports.userExercises = function userExercises(exerciseHistory) {
+	  return {
+	    type: 'USER_EXERCISES',
+	    exerciseHistory: exerciseHistory
+	  };
+	};
+	
+	var fetchWorkoutsSuccess = exports.fetchWorkoutsSuccess = function fetchWorkoutsSuccess(data) {
+	  return {
+	    type: 'FETCH_WORKOUT_SUCCESS',
+	    data: data
+	  };
+	};
+	
+	var changeExerciseProperty = exports.changeExerciseProperty = function changeExerciseProperty(exercise, id) {
+	  return {
+	    type: 'CHANGE_EXERCISE_PROPERTY',
+	    exercise: exercise,
+	    id: id
 	  };
 	};
 
 /***/ }),
-/* 294 */
+/* 301 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _reactRedux = __webpack_require__(245);
+	
+	var _WorkoutTab = __webpack_require__(302);
+	
+	var _WorkoutTab2 = _interopRequireDefault(_WorkoutTab);
+	
+	var _actions = __webpack_require__(300);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    user: state.user,
+	    exercises: state.exercises,
+	    workouts: state.workouts,
+	    detail: state.detail,
+	    categories: state.categories
+	  };
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    fetchAPIExercises: function fetchAPIExercises(body) {
+	      return dispatch((0, _actions.fetchAPIExercises)(body));
+	    },
+	    randomizeExercises: function randomizeExercises(array, count) {
+	      return dispatch((0, _actions.randomizeExercises)(array, count));
+	    },
+	    saveWorkout: function saveWorkout(body) {
+	      return dispatch((0, _actions.saveWorkout)(body));
+	    },
+	    fetchCategories: function fetchCategories() {
+	      return dispatch((0, _actions.fetchCategories)());
+	    },
+	    fetchWorkouts: function fetchWorkouts() {
+	      return dispatch((0, _actions.fetchWorkouts)());
+	    },
+	    fetchImageUrls: function fetchImageUrls(exercise_id) {
+	      return dispatch((0, _actions.fetchImageUrls)(exercise_id));
+	    },
+	    fetchUserExercises: function (_fetchUserExercises) {
+	      function fetchUserExercises(_x) {
+	        return _fetchUserExercises.apply(this, arguments);
+	      }
+	
+	      fetchUserExercises.toString = function () {
+	        return _fetchUserExercises.toString();
+	      };
+	
+	      return fetchUserExercises;
+	    }(function (user_id) {
+	      return dispatch(fetchUserExercises(user_id));
+	    })
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_WorkoutTab2.default);
+
+/***/ }),
+/* 302 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _constants = __webpack_require__(241);
+	
+	var _ExerciseCardContainer = __webpack_require__(303);
+	
+	var _ExerciseCardContainer2 = _interopRequireDefault(_ExerciseCardContainer);
+	
+	__webpack_require__(307);
+	
+	var _DetailViewContainer = __webpack_require__(309);
+	
+	var _DetailViewContainer2 = _interopRequireDefault(_DetailViewContainer);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var WorkoutTab = function (_Component) {
+	  _inherits(WorkoutTab, _Component);
+	
+	  function WorkoutTab() {
+	    _classCallCheck(this, WorkoutTab);
+	
+	    var _this = _possibleConstructorReturn(this, (WorkoutTab.__proto__ || Object.getPrototypeOf(WorkoutTab)).call(this));
+	
+	    _this.state = {
+	      listedExercises: [],
+	      imageUrls: [],
+	      workout: 'Workout A',
+	      description: '',
+	      randomAmount: 5,
+	      showDetail: false
+	    };
+	    _this.randomize = _this.randomize.bind(_this);
+	    _this.saveWorkout = _this.saveWorkout.bind(_this);
+	    _this.handleChange = _this.handleChange.bind(_this);
+	    _this.toggleDetail = _this.toggleDetail.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WorkoutTab, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _props = this.props,
+	          fetchAPIExercises = _props.fetchAPIExercises,
+	          fetchWorkouts = _props.fetchWorkouts,
+	          randomizeExercises = _props.randomizeExercises,
+	          all = _props.exercises.all,
+	          workouts = _props.workouts,
+	          categories = _props.categories;
+	
+	      if (!all.length) fetchAPIExercises();
+	      if (!workouts.length) fetchWorkouts();
+	    }
+	  }, {
+	    key: 'buildExercises',
+	    value: function buildExercises() {
+	      var _this2 = this;
+	
+	      var _props2 = this.props,
+	          current = _props2.exercises.current,
+	          detail = _props2.detail;
+	
+	      return current.map(function (e) {
+	        var active = e.id === detail.id;
+	        return _react2.default.createElement(_ExerciseCardContainer2.default, _extends({ key: e.id }, e, { active: active, toggleDetail: _this2.state.showDetail }));
+	      });
+	    }
+	  }, {
+	    key: 'toggleDetail',
+	    value: function toggleDetail() {
+	      this.setState({ showDetail: !this.state.showDetail });
+	    }
+	  }, {
+	    key: 'handleChange',
+	    value: function handleChange(e) {
+	      var _e$target = e.target,
+	          name = _e$target.name,
+	          value = _e$target.value;
+	
+	      var newValue = isNaN(parseInt(value)) ? value : parseInt(value);
+	
+	      this.setState(_defineProperty({}, name, newValue));
+	    }
+	  }, {
+	    key: 'randomize',
+	    value: function randomize() {
+	      var _props3 = this.props,
+	          randomizeExercises = _props3.randomizeExercises,
+	          all = _props3.exercises.all;
+	
+	      randomizeExercises(all, this.state.randomAmount);
+	    }
+	  }, {
+	    key: 'saveWorkout',
+	    value: function saveWorkout() {
+	      var _props4 = this.props,
+	          current = _props4.exercises.current,
+	          saveWorkout = _props4.saveWorkout,
+	          user = _props4.user;
+	
+	      var workout = Object.assign({
+	        user_id: user.id,
+	        title: this.state.workout,
+	        description: this.state.descrption,
+	        popularity: 1
+	      }, {
+	        exercises: current.map(function (e) {
+	          return {
+	            api_id: e.id,
+	            name: e.name,
+	            description: e.description,
+	            popularity: e.popularity || 1
+	          };
+	        })
+	      });
+	
+	      saveWorkout(workout);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+	
+	      var _state = this.state,
+	          workout = _state.workout,
+	          description = _state.description,
+	          randomAmount = _state.randomAmount;
+	
+	
+	      return _react2.default.createElement(
+	        'main',
+	        { className: 'workout-tab' },
+	        _react2.default.createElement(
+	          'section',
+	          { className: 'workout-build' },
+	          _react2.default.createElement(
+	            'h1',
+	            { className: 'workout-tab-title' },
+	            'Build Workout'
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'workout-titles' },
+	            _react2.default.createElement(
+	              'label',
+	              { htmlFor: 'workout' },
+	              'Workout Name:'
+	            ),
+	            _react2.default.createElement('input', {
+	              type: 'text',
+	              name: 'workout',
+	              value: workout,
+	              placeholder: 'Enter a Workout Name',
+	              onChange: function onChange(e) {
+	                return _this3.handleChange(e);
+	              }
+	            })
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'workout-btn-container' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'randomize' },
+	              _react2.default.createElement(
+	                'button',
+	                {
+	                  className: 'workout-randomize-btn',
+	                  value: randomAmount,
+	                  onClick: this.randomize },
+	                'Randomize'
+	              ),
+	              _react2.default.createElement(
+	                'label',
+	                { htmlFor: 'randomNumber' },
+	                'Exercise Count:',
+	                _react2.default.createElement('input', {
+	                  onChange: function onChange(e) {
+	                    return _this3.handleChange(e);
+	                  },
+	                  type: 'number',
+	                  name: 'randomAmount',
+	                  placeholder: 'exercises',
+	                  value: randomAmount
+	                })
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              null,
+	              _react2.default.createElement(
+	                'button',
+	                {
+	                  className: 'toggle-detail-btn',
+	                  onClick: this.toggleDetail },
+	                'Show Detail'
+	              ),
+	              _react2.default.createElement(
+	                'button',
+	                {
+	                  className: 'save-workout-btn',
+	                  onClick: this.saveWorkout },
+	                'Save Workout'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'exercise-container' },
+	            this.buildExercises()
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'section',
+	          { className: 'workout-popular' },
+	          _react2.default.createElement(
+	            'h1',
+	            { className: 'workout-tab-title' },
+	            'Exercise Detail'
+	          ),
+	          _react2.default.createElement(_DetailViewContainer2.default, null)
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return WorkoutTab;
+	}(_react.Component);
+	
+	exports.default = WorkoutTab;
+
+/***/ }),
+/* 303 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _reactRedux = __webpack_require__(245);
+	
+	var _ExerciseCard = __webpack_require__(304);
+	
+	var _ExerciseCard2 = _interopRequireDefault(_ExerciseCard);
+	
+	var _actions = __webpack_require__(300);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {};
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    fetchImageUrls: function fetchImageUrls(exercise_id) {
+	      return dispatch((0, _actions.fetchImageUrls)(exercise_id));
+	    },
+	    showDetail: function showDetail(exercise) {
+	      return dispatch((0, _actions.showDetail)(exercise));
+	    },
+	    changeExerciseProperty: function changeExerciseProperty(exercise, id) {
+	      return dispatch((0, _actions.changeExerciseProperty)(exercise, id));
+	    }
+	  };
+	};
+	exports.default = (0, _reactRedux.connect)(null, mapDispatchToProps)(_ExerciseCard2.default);
+
+/***/ }),
+/* 304 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	__webpack_require__(305);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var ExerciseCard = function (_Component) {
+	  _inherits(ExerciseCard, _Component);
+	
+	  function ExerciseCard() {
+	    _classCallCheck(this, ExerciseCard);
+	
+	    var _this = _possibleConstructorReturn(this, (ExerciseCard.__proto__ || Object.getPrototypeOf(ExerciseCard)).call(this));
+	
+	    _this.state = {
+	      sets: 3,
+	      reps: 8,
+	      type: 'Weight',
+	      measure: 'lbs',
+	      unit: 180,
+	      disabled: false
+	    };
+	    _this.handleChange = _this.handleChange.bind(_this);
+	    _this.handleClick = _this.handleClick.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(ExerciseCard, [{
+	    key: 'handleClick',
+	    value: function handleClick(e) {
+	      var _props = this.props,
+	          changeExerciseProperty = _props.changeExerciseProperty,
+	          id = _props.id;
+	      var _e$target = e.target,
+	          name = _e$target.name,
+	          value = _e$target.value;
+	
+	
+	      changeExerciseProperty({ popularity: value }, id);
+	    }
+	  }, {
+	    key: 'handleChange',
+	    value: function handleChange(e) {
+	      var _props2 = this.props,
+	          changeExerciseProperty = _props2.changeExerciseProperty,
+	          id = _props2.id;
+	      var _e$target2 = e.target,
+	          name = _e$target2.name,
+	          value = _e$target2.value;
+	
+	
+	      changeExerciseProperty(_defineProperty({}, name, value), id);
+	    }
+	  }, {
+	    key: 'getImages',
+	    value: function getImages(e) {
+	      var fetchImageUrls = this.props.fetchImageUrls;
+	
+	
+	      if (!(e.target.name === 'upvote' || e.target.name === 'downvote')) {
+	        fetchImageUrls(this.props);
+	      }
+	    }
+	  }, {
+	    key: 'popularityClass',
+	    value: function popularityClass(popularity) {
+	      var className = '';
+	      if (popularity < 1) {
+	        className = 'unpopular';
+	      } else if (popularity > 1) {
+	        className = 'popular';
+	      } else {
+	        className = 'neutral';
+	      }
+	
+	      return className;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+	
+	      var _props3 = this.props,
+	          id = _props3.id,
+	          name = _props3.name,
+	          description = _props3.description,
+	          fetchImageUrls = _props3.fetchImageUrls,
+	          toggleDetail = _props3.toggleDetail,
+	          active = _props3.active,
+	          popularity = _props3.popularity;
+	      var _props$statistics = this.props.statistics,
+	          sets = _props$statistics.sets,
+	          reps = _props$statistics.reps,
+	          unit = _props$statistics.unit,
+	          measure = _props$statistics.measure,
+	          type = _props$statistics.type,
+	          disabled = _props$statistics.disabled;
+	
+	      var activeClass = active ? 'active' : '';
+	      console.log(toggleDetail);
+	      return _react2.default.createElement(
+	        'article',
+	        { className: 'exercise-card ' + activeClass + ' ' + this.popularityClass(popularity) + ' ' + (toggleDetail ? 'hidden' : '') },
+	        _react2.default.createElement(
+	          'header',
+	          { className: 'exercise-card-header', onClick: function onClick(e) {
+	              return _this2.getImages(e);
+	            } },
+	          _react2.default.createElement(
+	            'h3',
+	            { className: 'exercise-card-title' },
+	            name
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'btn-helper' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'exercise-card-btn-container' },
+	              _react2.default.createElement(
+	                'button',
+	                {
+	                  name: 'upvote',
+	                  value: '2',
+	                  onClick: function onClick(e) {
+	                    return _this2.handleClick(e);
+	                  },
+	                  className: 'exercise-card-btn',
+	                  id: 'upvote' },
+	                'Upvote'
+	              ),
+	              _react2.default.createElement(
+	                'button',
+	                {
+	                  name: 'downvote',
+	                  value: '0',
+	                  onClick: function onClick(e) {
+	                    return _this2.handleClick(e);
+	                  },
+	                  className: 'exercise-card-btn',
+	                  id: 'downvote' },
+	                'Downvote'
+	              )
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          {
+	            className: 'exercise-card-stats'
+	          },
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	              'label',
+	              { htmlFor: 'sets' },
+	              'Sets'
+	            ),
+	            _react2.default.createElement('input', { type: 'text',
+	              name: 'sets',
+	              value: sets,
+	              disabled: disabled,
+	              onChange: function onChange(e) {
+	                return _this2.handleChange(e);
+	              }
+	            })
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	              'label',
+	              { htmlFor: 'reps' },
+	              'Reps'
+	            ),
+	            _react2.default.createElement('input', { type: 'text',
+	              name: 'reps',
+	              value: reps,
+	              disabled: disabled,
+	              onChange: function onChange(e) {
+	                return _this2.handleChange(e);
+	              }
+	            })
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	              'label',
+	              { htmlFor: 'unit' },
+	              type
+	            ),
+	            _react2.default.createElement('input', { type: 'text',
+	              name: 'unit',
+	              value: unit,
+	              disabled: disabled,
+	              onChange: function onChange(e) {
+	                return _this2.handleChange(e);
+	              }
+	            }),
+	            _react2.default.createElement(
+	              'select',
+	              { name: 'measure', className: 'select', onChange: this.handleChange },
+	              _react2.default.createElement(
+	                'option',
+	                { value: 'lbs' },
+	                'lbs'
+	              ),
+	              _react2.default.createElement(
+	                'option',
+	                { value: 'kg' },
+	                'kg'
+	              )
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return ExerciseCard;
+	}(_react.Component);
+	
+	exports.default = ExerciseCard;
+
+/***/ }),
+/* 305 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(306);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// Prepare cssTransformation
+	var transform;
+	
+	var options = {}
+	options.transform = transform
+	// add the styles to the DOM
+	var update = __webpack_require__(294)(content, options);
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../../node_modules/css-loader/index.js!./ExerciseCard.css", function() {
+				var newContent = require("!!../../../node_modules/css-loader/index.js!./ExerciseCard.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ }),
+/* 306 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(293)(undefined);
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".exercise-card * {\n  color: inherit;\n}\n\n.exercise-card {\n  margin: 15px;\n  padding: 10px;\n  border-radius: 10px;\n  height: 140px;\n  transition: all 0.3s ease-in-out;\n  /*transition: all 5s ease-in-out;*/\n  position: relative;\n  transform: translateX(0%);\n  z-index: 100;\n}\n\n.exercise-card.hidden {\n  height: 90px;\n}\n\n.exercise-card-header {\n  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);\n  border-radius: 10px;\n  background-color: rgb(240, 240, 240);\n  cursor: pointer;\n  padding: 10px;\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  align-items: center;\n  z-index: 100;\n}\n\n.exercise-card-btn-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n}\n\n.exercise-card-btn {\n  background-size: 25px;\n  background-position: center;\n  background-repeat: no-repeat;\n  height: 25px;\n  width: 50px;\n  position: relative;\n  color: transparent;\n}\n\n#upvote {background-image: url('/assets/images/up-arrow.svg')}\n#downvote {background-image: url('/assets/images/down-arrow.svg')}\n#upvote:hover,\n#downvote:hover {\n  color: rgb(49, 50, 49);\n  text-shadow: .5px .5px .5px .5px rgb(10, 10, 10);\n}\n#upvote:hover {background-image: url('/assets/images/up-arrow-hover.svg');}\n#downvote:hover {background-image: url('/assets/images/down-arrow-hover.svg');}\n\n.exercise-card-stats {\n  height: 50px;\n  position: absolute;\n  top: 74px;\n  left: 5%;\n  right: 5%;\n  padding: 15px 0;\n  display: flex;\n  flex-direction: row;\n  justify-content: space-around;\n  border-radius: 10px;\n  box-shadow: 2px 2px 5px rgb(106, 106, 106);\n  transition: all .3s ease-in-out;\n  z-index: -1;\n}\n\n.hidden .exercise-card-stats {\n  transform: translateY(-105%);\n}\n\n.exercise-card-stats input {\n  border: 1px solid #909090;\n  background-color: #fff;\n  text-align: center;\n  width: 50px;\n  margin: 0 5px;\n}\n\n.active .exercise-card-header {\n  border: 1px solid rgb(0, 7, 184);\n  background-color: rgb(169, 190, 252);\n}\n\n.exercise-card:hover {\n  transform: scale(1.05, 1.05);\n}\n\n.popular > div,\n.popular > header {\n  background-color: rgba(206, 252, 206, 1);\n}\n.unpopular > div,\n.unpopular > header {\n  background-color: rgba(251, 205, 188, 1);\n}\n", ""]);
+	
+	// exports
+
+
+/***/ }),
+/* 307 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(308);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// Prepare cssTransformation
+	var transform;
+	
+	var options = {}
+	options.transform = transform
+	// add the styles to the DOM
+	var update = __webpack_require__(294)(content, options);
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../../node_modules/css-loader/index.js!./WorkoutTab.css", function() {
+				var newContent = require("!!../../../node_modules/css-loader/index.js!./WorkoutTab.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ }),
+/* 308 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(293)(undefined);
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".workout-tab {\n  display: flex;\n  flex-direction: row;\n  height: calc(100vh - 60px);\n  max-width: 1200px;\n  width: 100%;\n  margin: 0 auto;\n\n}\n\n.workout-tab-title {\n  margin-bottom: 20px\n}\n\n.workout-titles {\n  display: flex;\n  justify-content:flex-start;\n  margin-bottom: 20px;\n  padding: 5px;\n}\n\n.workout-build input[type='text'] {\n  border: 1px solid #909090;\n  background-color: #fff;\n  text-align: center;\n  margin: 0 5px;\n}\n\n.randomize {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: space-between;\n}\n\n.randomize input {\n  width: 40px;\n  border: 1px solid #909090;\n  text-align: center;\n  margin: 0 5px;\n}\n\n.workout-btn-container {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  padding: 5px 10px;\n}\n\n.workout-popular,\n.workout-build {\n  width: 50%;\n  padding: 20px;\n}\n\n.workout-popular h1,\n.workout-build h1 {\n  text-align: center;\n  /*overflow-y: scroll;*/\n}\n\n.save-workout-btn,\n.workout-randomize-btn,\n.toggle-detail-btn {\n  padding: 5px;\n  border-radius: 10px;\n  color: #fff;\n  box-shadow: 2px 2px 2px rgb(75, 75, 75);\n  font-size: 18px;\n  transition: all .3s ease-in-out;\n}\n\n.save-workout-btn,\n.workout-randomize-btn {\n  background-color: #136EF6;\n}\n\n.toggle-detail-btn {\n  background-color: rgb(231, 231, 231);\n  color: rgb(28, 28, 28);\n  margin: 0 20px;\n}\n\n.save-workout-btn:hover,\n.workout-randomize-btn:hover {\n  transform: scale(1.05, 1.05);\n  background-color: #02419f;\n}\n\n.toggle-detail-btn:hover {\n  transform: scale(1.05, 1.05);\n  background-color: rgb(182, 182, 182);\n}\n\n.exercise-container {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n", ""]);
+	
+	// exports
+
+
+/***/ }),
+/* 309 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _reactRedux = __webpack_require__(245);
+	
+	var _DetailView = __webpack_require__(310);
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    detail: state.detail
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(_DetailView.DetailView);
+
+/***/ }),
+/* 310 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.DetailView = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	__webpack_require__(311);
+	
+	var _ExerciseImage = __webpack_require__(313);
+	
+	var _ExerciseImage2 = _interopRequireDefault(_ExerciseImage);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var DetailView = exports.DetailView = function (_Component) {
+	  _inherits(DetailView, _Component);
+	
+	  function DetailView() {
+	    _classCallCheck(this, DetailView);
+	
+	    return _possibleConstructorReturn(this, (DetailView.__proto__ || Object.getPrototypeOf(DetailView)).apply(this, arguments));
+	  }
+	
+	  _createClass(DetailView, [{
+	    key: 'render',
+	    value: function render() {
+	      if (!Object.keys(this.props.detail).length) {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'detail-view' },
+	          _react2.default.createElement(
+	            'h3',
+	            { className: 'detail-placeholder' },
+	            'Please Select a workout to view Detail'
+	          )
+	        );
+	      }
+	
+	      var _props$detail = this.props.detail,
+	          name = _props$detail.name,
+	          description = _props$detail.description,
+	          equipment = _props$detail.equipment,
+	          category = _props$detail.category,
+	          muscles = _props$detail.muscles,
+	          imageUrls = _props$detail.imageUrls;
+	
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'detail-view' },
+	        _react2.default.createElement(
+	          'h3',
+	          { className: 'detail-tab-title' },
+	          name
+	        ),
+	        _react2.default.createElement(
+	          'h4',
+	          null,
+	          'Category: ',
+	          category.name
+	        ),
+	        _react2.default.createElement(_ExerciseImage2.default, { imageUrls: imageUrls }),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'description-section' },
+	          _react2.default.createElement(
+	            'h4',
+	            null,
+	            'Exercise Description: '
+	          ),
+	          _react2.default.createElement('div', { className: 'detail-description',
+	            dangerouslySetInnerHTML: { __html: description } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'muscles-section' },
+	          _react2.default.createElement(
+	            'h4',
+	            null,
+	            'Muscles Worked: '
+	          ),
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            muscles.map(function (e) {
+	              return e.name;
+	            }).join(', ')
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'equipment-section' },
+	          _react2.default.createElement(
+	            'h4',
+	            null,
+	            'Equipment Needed : '
+	          ),
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            equipment.map(function (e) {
+	              return e.name;
+	            }).join(', ')
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return DetailView;
+	}(_react.Component);
+
+/***/ }),
+/* 311 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(312);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// Prepare cssTransformation
+	var transform;
+	
+	var options = {}
+	options.transform = transform
+	// add the styles to the DOM
+	var update = __webpack_require__(294)(content, options);
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../../node_modules/css-loader/index.js!./DetailView.css", function() {
+				var newContent = require("!!../../../node_modules/css-loader/index.js!./DetailView.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ }),
+/* 312 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(293)(undefined);
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".detail-image {\n  height: 300px;\n  display: block;\n  margin: 20px auto;\n}\n\n.detail-view {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n\n.detail-view p {\n  line-height: 24px;\n  text-indent: 20px;\n}\n\n.muscles-section,\n.description-section,\n.equipment-section {\n  margin-bottom: 20px;\n}\n", ""]);
+	
+	// exports
+
+
+/***/ }),
+/* 313 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	__webpack_require__(314);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var ExerciseImage = function (_Component) {
+	  _inherits(ExerciseImage, _Component);
+	
+	  function ExerciseImage() {
+	    _classCallCheck(this, ExerciseImage);
+	
+	    var _this = _possibleConstructorReturn(this, (ExerciseImage.__proto__ || Object.getPrototypeOf(ExerciseImage)).call(this));
+	
+	    _this.state = {
+	      index: 0,
+	      interval: 2000
+	    };
+	    _this.cycleThrough = _this.cycleThrough.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(ExerciseImage, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var interval = setInterval(this.cycleThrough, 2000);
+	      this.setState({ interval: interval });
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      clearInterval(this.state.interval);
+	    }
+	  }, {
+	    key: 'cycleThrough',
+	    value: function cycleThrough() {
+	      var imageUrls = this.props.imageUrls;
+	      var index = this.state.index;
+	
+	
+	      var newIndex = index;
+	      if (imageUrls) {
+	        newIndex = index + 1 >= imageUrls.length ? 0 : index + 1;
+	      }
+	
+	      this.setState({ index: newIndex });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var imageUrls = this.props.imageUrls;
+	      var index = this.state.index;
+	
+	
+	      if (!imageUrls) {
+	        return _react2.default.createElement(
+	          'p',
+	          null,
+	          'Loading'
+	        );
+	      } else if (!imageUrls.length) {
+	        return _react2.default.createElement(
+	          'p',
+	          null,
+	          'No images found'
+	        );
+	      }
+	
+	      return _react2.default.createElement('img', { src: imageUrls[index], className: 'detail-image' });
+	    }
+	  }]);
+	
+	  return ExerciseImage;
+	}(_react.Component);
+	
+	exports.default = ExerciseImage;
+
+/***/ }),
+/* 314 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(315);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// Prepare cssTransformation
+	var transform;
+	
+	var options = {}
+	options.transform = transform
+	// add the styles to the DOM
+	var update = __webpack_require__(294)(content, options);
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../../node_modules/css-loader/index.js!./ExerciseImage.css", function() {
+				var newContent = require("!!../../../node_modules/css-loader/index.js!./ExerciseImage.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ }),
+/* 315 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(293)(undefined);
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".detail-image {\n  height: 300px;\n}\n", ""]);
+	
+	// exports
+
+
+/***/ }),
+/* 316 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
