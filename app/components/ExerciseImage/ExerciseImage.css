@@ -1,3 +1,4 @@
-.detail-image {
+.detail-image,
+.detail-placeholder {
   height: 300px;
 }

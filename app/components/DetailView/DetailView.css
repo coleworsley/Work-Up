@@ -4,6 +4,11 @@
   margin: 20px auto;
 }
 
+.detail-placeholder {
+  text-align: center;
+  margin-top: 20%;
+}
+
 .detail-view {
   display: flex;
   flex-direction: column;

@@ -55,7 +55,6 @@ export default class ExerciseCard extends Component {
     const { id, name, description, fetchImageUrls, toggleDetail, active, popularity } = this.props;
     const { sets, reps, unit, measure, type, disabled } = this.props.statistics;
     const activeClass = active ? 'active' : ''
-    console.log(toggleDetail);
     return (
       <article className={`exercise-card ${activeClass} ${this.popularityClass(popularity)} ${toggleDetail ? 'hidden' : ''}`}>
 

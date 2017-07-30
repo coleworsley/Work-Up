@@ -38,9 +38,9 @@ export default class ExerciseImage extends Component {
     const { index } = this.state;
 
     if (!imageUrls) {
-      return <p>Loading</p>
+      return <p className='detail-placeholder'>Loading</p>
     } else if (!imageUrls.length) {
-      return <p>No images found</p>
+      return <p className='detail-placeholder'>No images found</p>
     }
 
     return <img src={imageUrls[index]} className='detail-image'/>
