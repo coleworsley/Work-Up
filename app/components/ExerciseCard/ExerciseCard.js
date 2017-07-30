@@ -52,12 +52,12 @@ export default class ExerciseCard extends Component {
   }
 
   render() {
-    const { id, name, description, fetchImageUrls, showDetail, active, popularity } = this.props;
+    const { id, name, description, fetchImageUrls, toggleDetail, active, popularity } = this.props;
     const { sets, reps, unit, measure, type, disabled } = this.props.statistics;
     const activeClass = active ? 'active' : ''
-
+    console.log(toggleDetail);
     return (
-      <article className={`exercise-card ${activeClass} ${this.popularityClass(popularity)}`}>
+      <article className={`exercise-card ${activeClass} ${this.popularityClass(popularity)} ${toggleDetail ? 'hidden' : ''}`}>
 
         <header className='exercise-card-header' onClick={(e) => this.getImages(e)}>
           <h3 className='exercise-card-title'>{name}</h3>
@@ -81,7 +81,9 @@ export default class ExerciseCard extends Component {
           </div>
         </header>
 
-        <div className='exercise-card-stats'>
+        <div
+          className={`exercise-card-stats`}
+          >
           <div>
             <label htmlFor='sets'>Sets</label>
             <input type='text'

@@ -6,8 +6,16 @@
   margin: 15px;
   padding: 10px;
   border-radius: 10px;
+  height: 140px;
   transition: all 0.3s ease-in-out;
+  /*transition: all 5s ease-in-out;*/
   position: relative;
+  transform: translateX(0%);
+  z-index: 100;
+}
+
+.exercise-card.hidden {
+  height: 90px;
 }
 
 .exercise-card-header {
@@ -20,6 +28,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  z-index: 100;
 }
 
 .exercise-card-btn-container {
@@ -50,14 +59,23 @@
 #downvote:hover {background-image: url('/assets/images/down-arrow-hover.svg');}
 
 .exercise-card-stats {
+  height: 50px;
+  position: absolute;
+  top: 74px;
+  left: 5%;
+  right: 5%;
   padding: 15px 0;
-  margin: 0 auto;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   border-radius: 10px;
   box-shadow: 2px 2px 5px rgb(106, 106, 106);
-  width: 90%;
+  transition: all .3s ease-in-out;
+  z-index: -1;
+}
+
+.hidden .exercise-card-stats {
+  transform: translateY(-105%);
 }
 
 .exercise-card-stats input {

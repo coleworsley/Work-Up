@@ -13,10 +13,12 @@ export default class WorkoutTab extends Component {
       workout: 'Workout A',
       description: '',
       randomAmount: 5,
+      showDetail: false,
     }
     this.randomize = this.randomize.bind(this);
     this.saveWorkout = this.saveWorkout.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.toggleDetail = this.toggleDetail.bind(this);
   }
 
   componentDidMount(){
@@ -34,22 +36,14 @@ export default class WorkoutTab extends Component {
     const { exercises: {current}, detail } = this.props;
     return current.map(e => {
       const active = e.id === detail.id;
-      return <ExerciseCardContainer key={e.id} {...e} active={active}/>
+      return <ExerciseCardContainer key={e.id} {...e} active={active} toggleDetail={this.state.showDetail}/>
     })
   }
 
-  // buildWorkouts() {
-  //   const { workouts } = this.props;
-  //
-  //   return workouts.length ? workouts.map(e => (
-  //     <div>
-  //       <h3>Workout title: {e.title}</h3>
-  //       <p>Workout description: {e.description}</p>
-  //       <p>Workout exercises: {e.exercises.map(exercise => <p>{exercise.name}</p>)}</p>
-  //     </div>
-  //   ))
-  //   : null
-  // }
+  toggleDetail() {
+    this.setState({ showDetail: !this.state.showDetail })
+  }
+
   handleChange(e) {
     const { name, value } = e.target;
     const newValue = isNaN(parseInt(value)) ? value : parseInt(value)
@@ -99,16 +93,6 @@ export default class WorkoutTab extends Component {
               placeholder='Enter a Workout Name'
               onChange={(e) => this.handleChange(e)}
             />
-            <label htmlFor='workout'>
-              Description:
-            </label>
-            <input
-              type="text"
-              name='description'
-              value={description}
-              placeholder='Description Optional'
-              onChange={(e) => this.handleChange(e)}
-            />
           </div>
           <div className="workout-btn-container">
             <div className="randomize">
@@ -127,13 +111,18 @@ export default class WorkoutTab extends Component {
                   value={randomAmount}
                 />
               </label>
-
             </div>
-            <button
-              className="save-workout-btn"
-              onClick={this.saveWorkout}>
-              Save Workout
-            </button>
+            <div>
+              <button
+                className='toggle-detail-btn'
+                onClick={this.toggleDetail}>Show Detail
+              </button>
+              <button
+                className="save-workout-btn"
+                onClick={this.saveWorkout}>
+                Save Workout
+              </button>
+            </div>
           </div>
           <div className="exercise-container">
             {this.buildExercises()}
@@ -141,7 +130,7 @@ export default class WorkoutTab extends Component {
 
         </section>
         <section className='workout-popular'>
-          <h1>Exercise Detail</h1>
+          <h1 className='workout-tab-title'>Exercise Detail</h1>
           <DetailViewContainer />
         </section>
       </main>

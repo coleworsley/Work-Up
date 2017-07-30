@@ -1,3 +1,23 @@
 .detail-image {
   height: 300px;
+  display: block;
+  margin: 20px auto;
+}
+
+.detail-view {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+.detail-view p {
+  line-height: 24px;
+  text-indent: 20px;
+}
+
+.muscles-section,
+.description-section,
+.equipment-section {
+  margin-bottom: 20px;
 }

@@ -14,7 +14,7 @@
 
 .workout-titles {
   display: flex;
-  justify-content: space-between;
+  justify-content:flex-start;
   margin-bottom: 20px;
   padding: 5px;
 }
@@ -33,14 +33,19 @@
   justify-content: space-between;
 }
 
+.randomize input {
+  width: 40px;
+  border: 1px solid #909090;
+  text-align: center;
+  margin: 0 5px;
+}
+
 .workout-btn-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 5px 10px;
 }
-
-
 
 .workout-popular,
 .workout-build {
@@ -51,17 +56,40 @@
 .workout-popular h1,
 .workout-build h1 {
   text-align: center;
-  overflow-y: scroll;
+  /*overflow-y: scroll;*/
 }
 
-
-
+.save-workout-btn,
+.workout-randomize-btn,
+.toggle-detail-btn {
+  padding: 5px;
+  border-radius: 10px;
+  color: #fff;
+  box-shadow: 2px 2px 2px rgb(75, 75, 75);
+  font-size: 18px;
+  transition: all .3s ease-in-out;
+}
 
 .save-workout-btn,
 .workout-randomize-btn {
-  padding: 5px;
   background-color: #136EF6;
-  font-size: 18px;
+}
+
+.toggle-detail-btn {
+  background-color: rgb(231, 231, 231);
+  color: rgb(28, 28, 28);
+  margin: 0 20px;
+}
+
+.save-workout-btn:hover,
+.workout-randomize-btn:hover {
+  transform: scale(1.05, 1.05);
+  background-color: #02419f;
+}
+
+.toggle-detail-btn:hover {
+  transform: scale(1.05, 1.05);
+  background-color: rgb(182, 182, 182);
 }
 
 .exercise-container {

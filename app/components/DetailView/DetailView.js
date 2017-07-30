@@ -21,14 +21,24 @@ export class DetailView extends Component {
 
     return (
       <div className='detail-view'>
-        <h3 className='workout-tab-title'>{name}</h3>
+        <h3 className='detail-tab-title'>{name}</h3>
         <h4>Category: {category.name}</h4>
         <ExerciseImage imageUrls={imageUrls}/>
-        <div className="detail-description"
-          dangerouslySetInnerHTML={{ __html: description }}>
+
+        <div className='description-section'>
+          <h4>Exercise Description: </h4>
+          <div className="detail-description"
+            dangerouslySetInnerHTML={{ __html: description }}>
+          </div>
         </div>
-        <p>Muscles Worked: {muscles.map(e => e.name).join(', ')}</p>
-        <p>Equipment Needed: {equipment.map(e => e.name).join(', ')}</p>
+        <div className='muscles-section'>
+          <h4>Muscles Worked: </h4>
+          <p>{muscles.map(e => e.name).join(', ')}</p>
+        </div>
+        <div className='equipment-section'>
+          <h4>Equipment Needed : </h4>
+          <p>{equipment.map(e => e.name).join(', ')}</p>
+        </div>
       </div>
     )
   }
