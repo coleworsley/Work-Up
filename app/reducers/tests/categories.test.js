@@ -1,8 +1,8 @@
-import categories from '../categories';
-// import { shallow, mount } from 'enzyme';
+import { categories } from '../categories';
+import * as actions from '../../actions';
 
 describe('categories reducer', () => {
-  it('should render', () => {
-
+  it('should return initial state', () => {
+    expect(categories(undefined, {})).toEqual({})
   })
 })
