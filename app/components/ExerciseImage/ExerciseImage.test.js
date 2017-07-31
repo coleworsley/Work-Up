@@ -6,11 +6,10 @@ describe('ExerciseImage Component', () => {
   it('should render', () => {
     const wrapper = shallow(<ExerciseImage imageUrls={['url1', 'url2']}/>)
 
-    console.log(wrapper.debug());
     expect(wrapper.length).toEqual(1);
   })
 
   it('should cycle through images every 2 seconds',() => {
-    
+
   })
 })
