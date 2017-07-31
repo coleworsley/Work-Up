@@ -6,7 +6,6 @@ describe('Login Component', () => {
   it('should render', () => {
     const wrapper = shallow(<Login/>)
 
-  
     expect(wrapper.length).toEqual(1);
   })
 })

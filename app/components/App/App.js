@@ -22,7 +22,7 @@ export default class App extends Component {
 
         <Route exact path='/login' component={LoginContainer} />
         <Route path='/workouts' component={WorkoutTabContainer} />
-        {/* <Route path='/dashboard' component={Dashboard} /> */}
+        <Route path='/dashboard' component={Dashboard} />
 
       </div>
 

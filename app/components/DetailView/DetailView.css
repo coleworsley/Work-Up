@@ -1,12 +1,15 @@
 .detail-image {
   height: 300px;
+  max-width: 500px;
   display: block;
   margin: 20px auto;
 }
 
 .detail-placeholder {
   text-align: center;
-  margin-top: 20%;
+  line-height: 300px;
+  vertical-align: middle;
+  /*margin-top: 20%;*/
 }
 
 .detail-view {

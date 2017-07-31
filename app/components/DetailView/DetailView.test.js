@@ -4,7 +4,7 @@ import { shallow, mount } from 'enzyme';
 
 const props = {
   name: 'workout name',
-  description: 'workout description',
+  description: '<p>workout description</p>',
   equipment: ['equipment'],
   category: 'something',
   muscles: ['a muscle'],
@@ -26,10 +26,18 @@ describe('DetailView Component', () => {
   })
 
   it('should display exercise details', () => {
+    const wrapper = mount(<DetailView detail={props}/>)
 
+
+    expect(wrapper.find('.description-section').length).toEqual(1);
+    expect(wrapper.find('.detail-description').length).toEqual(1);
+    expect(wrapper.find('.muscles-section').length).toEqual(1);
+    expect(wrapper.find('.equipment-section').length).toEqual(1);
   })
 
   it('should render an Exercise Image', () => {
-    
+    const wrapper = mount(<DetailView detail={props}/>)
+
+    expect(wrapper.find('.detail-image').length).toEqual(1);
   })
 })

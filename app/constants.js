@@ -1,5 +1,5 @@
 // URLs
-export const EXERCISES_URL = 'https://wger.de/api/v2/exercise/?format=json&language=2&license_author=wger.de&limit=5';
+export const EXERCISES_URL = 'https://wger.de/api/v2/exercise/?format=json&language=2&limit=250';
 export const EXERCISE_IMG_BASE_URL = 'https://wger.de/api/v2/exerciseimage/?format=json&exercise=';
 export const MUSCLE_URL = 'https://wger.de/api/v2/muscle/';
 export const EQUIPMENT_URL = 'https://wger.de/api/v2/equipment/';
