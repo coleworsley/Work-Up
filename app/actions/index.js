@@ -116,7 +116,7 @@ export const fetchAPIExercises = (user_id) => {
     .catch(error => pageDataFailed(error))
   }
 }
-
+//
 export const fetchImageUrls = (exercise) => {
   return (dispatch) => {
     dispatch(showDetail(exercise))

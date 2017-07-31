@@ -8,8 +8,6 @@ describe('exerciseReducer reducer', () => {
   }
 
   it('should return initial state', () => {
-
-
     expect(exercises(undefined, {})).toEqual(initialState)
   })
 })
