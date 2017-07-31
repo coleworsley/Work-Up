@@ -39,5 +39,4 @@ describe('ExerciseImage Component', () => {
     wrapper.update()
     expect(wrapper.find('img').prop('src')).toEqual('url2')
   })
-
 })

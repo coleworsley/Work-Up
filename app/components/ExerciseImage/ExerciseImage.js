@@ -34,7 +34,7 @@ export default class ExerciseImage extends Component {
   }
 
   render() {
-    const { imageUrls } = this.props
+    const { imageUrls } = this.props;
     const { index } = this.state;
 
     if (!imageUrls) {
