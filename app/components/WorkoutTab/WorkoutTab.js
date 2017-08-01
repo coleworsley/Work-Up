@@ -46,14 +46,14 @@ export default class WorkoutTab extends Component {
 
   handleChange(e) {
     const { name, value } = e.target;
-    const newValue = isNaN(parseInt(value)) ? value : parseInt(value)
+    const newValue = isNaN(parseInt(value)) ? value : parseInt(value);
 
-    this.setState({[name]: newValue})
+    this.setState({[name]: newValue});
   }
 
   randomize() {
     const { randomizeExercises, exercises: { all } } = this.props;
-    randomizeExercises(all, this.state.randomAmount)
+    randomizeExercises(all, this.state.randomAmount);
   }
 
   saveWorkout() {
