@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { randomizeArr } from '../../constants';
 import ExerciseCardContainer from '../../containers/ExerciseCardContainer';
 import './WorkoutTab.css';
-import DetailViewContainer from '../../containers/DetailViewContainer'
+import DetailViewContainer from '../../containers/DetailViewContainer';
+import { WorkoutTabHeader } from '../WorkoutTabHeader/WorkoutTabHeader'
 
 export default class WorkoutTab extends Component {
   constructor() {
@@ -80,6 +81,7 @@ export default class WorkoutTab extends Component {
 
     return (
       <main className='workout-tab'>
+        <WorkoutTabHeader />
         <section className='workout-build'>
           <h1 className='workout-tab-title'>Build Workout</h1>
           <div className="workout-titles">

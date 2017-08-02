@@ -1,6 +1,7 @@
 import React from 'react';
+import { PieChart } from '../PieChart/PieChart';
 
-const WorkoutTabHeader = () => {
+export const WorkoutTabHeader = () => {
   return (
     <header className="workout-tab-header">
       <section className="workout-tab-title-description">
@@ -16,7 +17,25 @@ const WorkoutTabHeader = () => {
         </div>
       </section>
       <section className="workout-tab-summary">
-
+        <div className="workout-tab-summary-bpx">
+          <table>
+            <tbody>
+              <tr>
+                <td>Arms:</td>
+                <td>50%</td>
+              </tr>
+              <tr>
+                <td>Legs:</td>
+                <td>25%</td>
+              </tr>
+              <tr>
+                <td>Abs:</td>
+                <td>25%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <PieChart />
       </section>
     </header>
   )
