@@ -1,5 +1,6 @@
 import React from 'react';
 import { PieChart } from '../PieChart/PieChart';
+import './WorkoutTabHeader.css';
 
 export const WorkoutTabHeader = () => {
   return (
@@ -17,7 +18,7 @@ export const WorkoutTabHeader = () => {
         </div>
       </section>
       <section className="workout-tab-summary">
-        <div className="workout-tab-summary-bpx">
+        <div className="workout-tab-summary-box">
           <table>
             <tbody>
               <tr>
