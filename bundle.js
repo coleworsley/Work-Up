@@ -34,7 +34,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/";
+/******/ 	__webpack_require__.p = "localhost:3000/";
 /******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -34425,7 +34425,7 @@
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	// URLs
-	var EXERCISES_URL = exports.EXERCISES_URL = 'https://wger.de/api/v2/exercise/?format=json&language=2&license_author=wger.de&limit=5';
+	var EXERCISES_URL = exports.EXERCISES_URL = 'https://wger.de/api/v2/exercise/?format=json&language=2&limit=1';
 	var EXERCISE_IMG_BASE_URL = exports.EXERCISE_IMG_BASE_URL = 'https://wger.de/api/v2/exerciseimage/?format=json&exercise=';
 	var MUSCLE_URL = exports.MUSCLE_URL = 'https://wger.de/api/v2/muscle/';
 	var EQUIPMENT_URL = exports.EQUIPMENT_URL = 'https://wger.de/api/v2/equipment/';
@@ -38041,7 +38041,7 @@
 	
 	var _WorkoutTabContainer2 = _interopRequireDefault(_WorkoutTabContainer);
 	
-	var _Dashboard = __webpack_require__(612);
+	var _Dashboard = __webpack_require__(619);
 	
 	var _Dashboard2 = _interopRequireDefault(_Dashboard);
 	
@@ -38080,7 +38080,8 @@
 	          }
 	        }),
 	        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/login', component: _LoginContainer2.default }),
-	        _react2.default.createElement(_reactRouterDom.Route, { path: '/workouts', component: _WorkoutTabContainer2.default })
+	        _react2.default.createElement(_reactRouterDom.Route, { path: '/workouts', component: _WorkoutTabContainer2.default }),
+	        _react2.default.createElement(_reactRouterDom.Route, { path: '/dashboard', component: _Dashboard2.default })
 	      );
 	    }
 	  }]);
@@ -39216,7 +39217,7 @@
 	    });
 	  };
 	};
-	
+	//
 	var fetchImageUrls = exports.fetchImageUrls = function fetchImageUrls(exercise) {
 	  return function (dispatch) {
 	    dispatch(showDetail(exercise));
@@ -39468,6 +39469,10 @@
 	
 	var _DetailViewContainer2 = _interopRequireDefault(_DetailViewContainer);
 	
+	var _WorkoutTabHeader = __webpack_require__(612);
+	
+	var _ExerciseList = __webpack_require__(616);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -39583,8 +39588,6 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this3 = this;
-	
 	      var _state = this.state,
 	          workout = _state.workout,
 	          description = _state.description,
@@ -39594,96 +39597,8 @@
 	      return _react2.default.createElement(
 	        'main',
 	        { className: 'workout-tab' },
-	        _react2.default.createElement(
-	          'section',
-	          { className: 'workout-build' },
-	          _react2.default.createElement(
-	            'h1',
-	            { className: 'workout-tab-title' },
-	            'Build Workout'
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'workout-titles' },
-	            _react2.default.createElement(
-	              'label',
-	              { htmlFor: 'workout' },
-	              'Workout Name:'
-	            ),
-	            _react2.default.createElement('input', {
-	              type: 'text',
-	              name: 'workout',
-	              value: workout,
-	              placeholder: 'Enter a Workout Name',
-	              onChange: function onChange(e) {
-	                return _this3.handleChange(e);
-	              }
-	            })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'workout-btn-container' },
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'randomize' },
-	              _react2.default.createElement(
-	                'button',
-	                {
-	                  className: 'workout-randomize-btn',
-	                  value: randomAmount,
-	                  onClick: this.randomize },
-	                'Randomize'
-	              ),
-	              _react2.default.createElement(
-	                'label',
-	                { htmlFor: 'randomNumber' },
-	                'Exercise Count:',
-	                _react2.default.createElement('input', {
-	                  onChange: function onChange(e) {
-	                    return _this3.handleChange(e);
-	                  },
-	                  type: 'number',
-	                  name: 'randomAmount',
-	                  placeholder: 'exercises',
-	                  value: randomAmount
-	                })
-	              )
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              null,
-	              _react2.default.createElement(
-	                'button',
-	                {
-	                  className: 'toggle-detail-btn',
-	                  onClick: this.toggleDetail },
-	                'Show Detail'
-	              ),
-	              _react2.default.createElement(
-	                'button',
-	                {
-	                  className: 'save-workout-btn',
-	                  onClick: this.saveWorkout },
-	                'Save Workout'
-	              )
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'exercise-container' },
-	            this.buildExercises()
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'section',
-	          { className: 'workout-popular' },
-	          _react2.default.createElement(
-	            'h1',
-	            { className: 'workout-tab-title' },
-	            'Exercise Detail'
-	          ),
-	          _react2.default.createElement(_DetailViewContainer2.default, null)
-	        )
+	        _react2.default.createElement(_WorkoutTabHeader.WorkoutTabHeader, null),
+	        _react2.default.createElement(_ExerciseList.ExerciseList, null)
 	      );
 	    }
 	  }]);
@@ -39692,6 +39607,60 @@
 	}(_react.Component);
 	
 	exports.default = WorkoutTab;
+	
+	
+	{/* <section className='workout-build'>
+	   <h1 className='workout-tab-title'>Build Workout</h1>
+	   <div className="workout-titles">
+	     <label htmlFor='workout'>
+	       Workout Name:
+	     </label>
+	     <input
+	       type="text"
+	       name='workout'
+	       value={workout}
+	       placeholder='Enter a Workout Name'
+	       onChange={(e) => this.handleChange(e)}
+	     />
+	   </div>
+	   <div className="workout-btn-container">
+	     <div className="randomize">
+	       <button
+	         className='workout-randomize-btn'
+	         value={randomAmount}
+	         onClick={this.randomize}>
+	         Randomize
+	       </button>
+	       <label htmlFor="randomNumber">Exercise Count:
+	         <input
+	           onChange={(e) => this.handleChange(e)}
+	           type="number"
+	           name='randomAmount'
+	           placeholder='exercises'
+	           value={randomAmount}
+	         />
+	       </label>
+	     </div>
+	     <div>
+	       <button
+	         className='toggle-detail-btn'
+	         onClick={this.toggleDetail}>Show Detail
+	       </button>
+	       <button
+	         className="save-workout-btn"
+	         onClick={this.saveWorkout}>
+	         Save Workout
+	       </button>
+	     </div>
+	   </div>
+	   <div className="exercise-container">
+	     {this.buildExercises()}
+	   </div>
+	  </section>
+	  <section className='workout-popular'>
+	   <h1 className='workout-tab-title'>Exercise Detail</h1>
+	   <DetailViewContainer />
+	  </section> */}
 
 /***/ }),
 /* 599 */
@@ -40064,7 +40033,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".workout-tab {\n  display: flex;\n  flex-direction: row;\n  height: calc(100vh - 60px);\n  max-width: 1200px;\n  width: 100%;\n  margin: 0 auto;\n\n}\n\n.workout-tab-title {\n  margin-bottom: 20px\n}\n\n.workout-titles {\n  display: flex;\n  justify-content:flex-start;\n  margin-bottom: 20px;\n  padding: 5px;\n}\n\n.workout-build input[type='text'] {\n  border: 1px solid #909090;\n  background-color: #fff;\n  text-align: center;\n  margin: 0 5px;\n}\n\n.randomize {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: space-between;\n}\n\n.randomize input {\n  width: 40px;\n  border: 1px solid #909090;\n  text-align: center;\n  margin: 0 5px;\n}\n\n.workout-btn-container {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  padding: 5px 10px;\n}\n\n.workout-popular,\n.workout-build {\n  width: 50%;\n  padding: 20px;\n}\n\n.workout-popular h1,\n.workout-build h1 {\n  text-align: center;\n  /*overflow-y: scroll;*/\n}\n\n.save-workout-btn,\n.workout-randomize-btn,\n.toggle-detail-btn {\n  padding: 5px;\n  border-radius: 10px;\n  color: #fff;\n  box-shadow: 2px 2px 2px rgb(75, 75, 75);\n  font-size: 18px;\n  transition: all .3s ease-in-out;\n}\n\n.save-workout-btn,\n.workout-randomize-btn {\n  background-color: #136EF6;\n}\n\n.toggle-detail-btn {\n  background-color: rgb(231, 231, 231);\n  color: rgb(28, 28, 28);\n  margin: 0 20px;\n}\n\n.save-workout-btn:hover,\n.workout-randomize-btn:hover {\n  transform: scale(1.05, 1.05);\n  background-color: #02419f;\n}\n\n.toggle-detail-btn:hover {\n  transform: scale(1.05, 1.05);\n  background-color: rgb(182, 182, 182);\n}\n\n.exercise-container {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n", ""]);
+	exports.push([module.id, "", ""]);
 	
 	// exports
 
@@ -40260,7 +40229,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".detail-image {\n  height: 300px;\n  display: block;\n  margin: 20px auto;\n}\n\n.detail-placeholder {\n  text-align: center;\n  margin-top: 20%;\n}\n\n.detail-view {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n\n.detail-view p {\n  line-height: 24px;\n  text-indent: 20px;\n}\n\n.muscles-section,\n.description-section,\n.equipment-section {\n  margin-bottom: 20px;\n}\n", ""]);
+	exports.push([module.id, ".detail-image {\n  height: 300px;\n  max-width: 500px;\n  display: block;\n  margin: 20px auto;\n}\n\n.detail-placeholder {\n  text-align: center;\n  line-height: 300px;\n  vertical-align: middle;\n  /*margin-top: 20%;*/\n}\n\n.detail-view {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n\n.detail-view p {\n  line-height: 24px;\n  text-indent: 20px;\n}\n\n.muscles-section,\n.description-section,\n.equipment-section {\n  margin-bottom: 20px;\n}\n", ""]);
 	
 	// exports
 
@@ -40409,6 +40378,301 @@
 
 /***/ }),
 /* 612 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.WorkoutTabHeader = undefined;
+	
+	var _react = __webpack_require__(298);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _PieChart = __webpack_require__(613);
+	
+	__webpack_require__(614);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var WorkoutTabHeader = exports.WorkoutTabHeader = function WorkoutTabHeader() {
+	  return _react2.default.createElement(
+	    'header',
+	    { className: 'workout-tab-header' },
+	    _react2.default.createElement(
+	      'section',
+	      { className: 'workout-tab-title-description' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'workout-tab-title-box' },
+	        _react2.default.createElement('img', { src: 'hamburger-menu', alt: 'hamburger-menu', className: 'menu-icon' }),
+	        _react2.default.createElement(
+	          'h2',
+	          { className: 'workout-tab-title-text' },
+	          'Workout Page'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'workout-tab-description-box' },
+	        _react2.default.createElement(
+	          'h3',
+	          { className: 'workout-tab-description' },
+	          'Description'
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          { className: 'workout-tab-description-text' },
+	          'Select your exercises using the search or randomize feature. As you upvote or downvote more exercises, WorkUp\'s algorithm will make smarter suggestions for your workout.'
+	        )
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'section',
+	      { className: 'workout-tab-summary' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'workout-tab-summary-box' },
+	        _react2.default.createElement(
+	          'table',
+	          null,
+	          _react2.default.createElement(
+	            'tbody',
+	            null,
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                'Arms:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                '50%'
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                'Legs:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                '25%'
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                'Abs:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                '25%'
+	              )
+	            )
+	          )
+	        )
+	      ),
+	      _react2.default.createElement(_PieChart.PieChart, null)
+	    )
+	  );
+	};
+
+/***/ }),
+/* 613 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.PieChart = undefined;
+	
+	var _react = __webpack_require__(298);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var PieChart = exports.PieChart = function PieChart() {
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    'PieChart'
+	  );
+	};
+
+/***/ }),
+/* 614 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(615);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// Prepare cssTransformation
+	var transform;
+	
+	var options = {}
+	options.transform = transform
+	// add the styles to the DOM
+	var update = __webpack_require__(590)(content, options);
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../../node_modules/css-loader/index.js!./WorkoutTabHeader.css", function() {
+				var newContent = require("!!../../../node_modules/css-loader/index.js!./WorkoutTabHeader.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ }),
+/* 615 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(589)(undefined);
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".workout-tab-header {\n  display: flex;\n  flex-direction: row;\n}\n\n.workout-tab-title-description {\n  width: 66.66%;\n  background-color: grey;\n}\n\n.workout-tab-summary {\n  width: 33.33%;\n  background-color: lightgrey;\n}\n\n\n.workout-tab-title-box {\n  display: flex;\n  flex-direction: row;\n}\n\n.workout-tab-summary {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n}\n", ""]);
+	
+	// exports
+
+
+/***/ }),
+/* 616 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.ExerciseList = undefined;
+	
+	var _react = __webpack_require__(298);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	__webpack_require__(617);
+	
+	var _reactRouterDom = __webpack_require__(556);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ExerciseList = exports.ExerciseList = function ExerciseList() {
+	  return _react2.default.createElement(
+	    'section',
+	    { className: 'exercise-list-container' },
+	    _react2.default.createElement(
+	      'nav',
+	      { className: 'tabs' },
+	      _react2.default.createElement(
+	        _reactRouterDom.Link,
+	        { to: '/workouts/search' },
+	        'Search'
+	      ),
+	      _react2.default.createElement(
+	        _reactRouterDom.Link,
+	        { to: '/workouts/exercises' },
+	        'Exercises'
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'exercise-list' },
+	      _react2.default.createElement(
+	        'header',
+	        { className: 'exercise-list-header' },
+	        _react2.default.createElement(
+	          'h3',
+	          { className: 'exercise-list-workout' },
+	          'Workout Name'
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          null,
+	          'Randomize'
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          null,
+	          'Save Workout'
+	        )
+	      )
+	    )
+	  );
+	};
+
+/***/ }),
+/* 617 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(618);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// Prepare cssTransformation
+	var transform;
+	
+	var options = {}
+	options.transform = transform
+	// add the styles to the DOM
+	var update = __webpack_require__(590)(content, options);
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../../node_modules/css-loader/index.js!./ExerciseList.css", function() {
+				var newContent = require("!!../../../node_modules/css-loader/index.js!./ExerciseList.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ }),
+/* 618 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(589)(undefined);
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".exercise-list-header {\n  display: flex;\n  flex-direction: row;\n}\n\n.tabs {\n  display: flex;\n  justify-content: flex-start;\n  flex-direction: row;\n}\n\n.tabs a {\n  margin: 0 5px;\n  padding: 5px;\n  border-radius: 3px 3px 0 0;\n  box-shadow: 3px 3px 3px #333;\n  transition: all linear 0.25s;\n}\n\n.tabs a:hover {\n  background:#a7cce5;\n  text-decoration:none;\n}\n\n.tabs.active a, .tabs.active a:hover {\n  background:#fff;\n  color:#4c4c4c;\n}\n\n\n.exercise-list {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  background-color: red;\n}\n", ""]);
+	
+	// exports
+
+
+/***/ }),
+/* 619 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';

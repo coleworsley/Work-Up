@@ -1,0 +1,38 @@
+.exercise-list-header {
+  display: flex;
+  flex-direction: row;
+}
+
+.tabs {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+
+.tabs a {
+  margin: 0 5px;
+  padding: 5px;
+  border-radius: 3px 3px 0 0;
+  box-shadow: 3px 3px 3px #333;
+  transition: all linear 0.25s;
+}
+
+.tabs a:hover {
+  background:#a7cce5;
+  text-decoration:none;
+}
+
+.tabs.active a, .tabs.active a:hover {
+  background:#fff;
+  color:#4c4c4c;
+}
+
+
+.exercise-list-header {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: red;
+}

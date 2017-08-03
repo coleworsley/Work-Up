@@ -4,6 +4,7 @@ import ExerciseCardContainer from '../../containers/ExerciseCardContainer';
 import './WorkoutTab.css';
 import DetailViewContainer from '../../containers/DetailViewContainer';
 import { WorkoutTabHeader } from '../WorkoutTabHeader/WorkoutTabHeader'
+import { ExerciseList } from '../ExerciseList/ExerciseList'
 
 export default class WorkoutTab extends Component {
   constructor() {
@@ -82,7 +83,7 @@ export default class WorkoutTab extends Component {
     return (
       <main className='workout-tab'>
         <WorkoutTabHeader />
-        
+        <ExerciseList />
       </main>
     )
   }
