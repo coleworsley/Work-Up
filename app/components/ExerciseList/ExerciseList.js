@@ -1,8 +1,11 @@
 import React from 'react';
 import './ExerciseList.css';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import ExerciseCard from '../ExerciseCard/ExerciseCard'
 
 export const ExerciseList = () => {
+  const ExerciseCards = <ExerciseCard />
+
   return (
     <section className='exercise-list-container'>
       <nav className="tabs">
@@ -15,6 +18,9 @@ export const ExerciseList = () => {
           <button>Randomize</button>
           <button>Save Workout</button>
         </header>
+        <main className="exercise-card-container">
+          {ExerciseCards}
+        </main>
 
       </div>
 
