@@ -5,8 +5,12 @@ import { Link } from 'react-router-dom';
 export default class ExerciseCard extends Component {
   constructor() {
     super();
+    this.state = {
+      flip: 'front',
+    }
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleFlip = this.handleFlip.bind(this);
   }
 
   handleClick (e) {
@@ -44,6 +48,10 @@ export default class ExerciseCard extends Component {
     return className;
   }
 
+  handleFlip() {
+    this.setState({flip: this.state.flip === 'front' ? 'back' : 'front'})
+  }
+
   render() {
     const style = {
       backgroundImage: `url('https://wger.de/media/exercise-images/88/Narrow-grip-bench-press-1.png')`
@@ -51,7 +59,7 @@ export default class ExerciseCard extends Component {
 
     return (
       <article className='exercise-card'>
-        <div className="sub-card" style={style}>
+        <div className={`sub-card ${this.state.flip}`} style={style}>
 
           <div id="exercise-card-front">
 
@@ -89,7 +97,8 @@ export default class ExerciseCard extends Component {
                 id='exercise-card-link'
                 className='exercise-card-content'>More Info
               </Link>
-              <button>Flip</button>
+              <button
+                onClick={() => this.handleFlip()}>Flip</button>
             </footer>
           </div>
 
@@ -118,7 +127,8 @@ export default class ExerciseCard extends Component {
                 id='exercise-card-link'
                 className='exercise-card-content'>More Info
               </Link>
-              <button>Flip</button>
+              <button
+                onClick={() => this.handleFlip()}>Flip</button>
             </footer>
 
           </div>

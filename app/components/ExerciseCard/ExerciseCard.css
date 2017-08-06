@@ -22,7 +22,11 @@
   background-repeat: no-repeat;
 }
 
-.exercise-card:hover .sub-card, .exercise-card.hover .sub-card {
+/*.exercise-card:hover .sub-card, .exercise-card.hover .sub-card {
+  transform: rotateY(180deg);
+}*/
+
+.sub-card.back {
   transform: rotateY(180deg);
 }
 
@@ -42,6 +46,11 @@
 #exercise-card-back {
   transform: rotateY(180deg);
 }
+
+.flip-container:hover .flipper, .flip-container.hover .flipper, .flip-container.flip .flipper {
+	transform: rotateY(180deg);
+}
+
 
 /*
 
