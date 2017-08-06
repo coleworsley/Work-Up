@@ -1,8 +1,3 @@
-.exercise-list-header {
-  display: flex;
-  flex-direction: row;
-}
-
 .tabs {
   display: flex;
   justify-content: flex-start;
@@ -35,4 +30,11 @@
   justify-content: space-between;
   align-items: center;
   background-color: red;
+}
+
+.exercise-card-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }

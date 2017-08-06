@@ -45,51 +45,84 @@ export default class ExerciseCard extends Component {
   }
 
   render() {
+    const style = {
+      backgroundImage: `url('https://wger.de/media/exercise-images/88/Narrow-grip-bench-press-1.png')`
+    }
+
     return (
       <article className='exercise-card'>
-        <header className='exercise-card-header'>
-          <h3 className="exercise-card-title">Bent over rowing</h3>
-          <button className="delete-card">Delete</button>
-        </header>
-        <div className="exercise-card-content" id='basic-card-info'>
-          <div className="primary-group">
-            <p>Primary Group: </p>
-            <p>Abs</p>
+        <div className="sub-card" style={style}>
+
+          <div id="exercise-card-front">
+
+            <header className='exercise-card-header'>
+              <h3 className="exercise-card-title">Bent over rowing</h3>
+              <button className="delete-card">Delete</button>
+            </header>
+
+            <div className="exercise-card-content" id='exercise-preference'>
+              <h3>Exercise Preference</h3>
+              <div className="exercise-card-btn-box">
+                <button
+                  name='upvote'
+                  value='2'
+                  onClick={(e) => this.handleClick(e)}
+                  className='exercise-card-btn'
+                  id='upvote'>Upvote
+                </button>
+                <h3>Neutral</h3>
+                <button
+                  name='downvote'
+                  value='0'
+                  onClick={(e) => this.handleClick(e)}
+                  className='exercise-card-btn'
+                  id='downvote'>Downvote
+                </button>
+              </div>
+              <p>The buttons above increase or decrease the likeness this workout will appear again</p>
+            </div>
+
+            <footer className='exercise-card-footer'>
+              <button>Lock</button>
+              <Link
+                to='/exercise/id'
+                id='exercise-card-link'
+                className='exercise-card-content'>More Info
+              </Link>
+              <button>Flip</button>
+            </footer>
           </div>
-          <div className="equipment-group">
-            <p>Equipment: </p>
-            <p>Abs</p>
+
+
+          <div id='exercise-card-back'>
+            <header className='exercise-card-header'>
+              <h3 className="exercise-card-title">Bent over rowing</h3>
+              <button className="delete-card">Delete</button>
+            </header>
+
+            <div className="exercise-card-content" id='exercise-info'>
+              <div className="primary-group">
+                <p>Primary Group: </p>
+                <p>Abs</p>
+              </div>
+              <div className="equipment-group">
+                <p>Equipment: </p>
+                <p>Abs</p>
+              </div>
+            </div>
+
+            <footer className='exercise-card-footer'>
+              <button>Lock</button>
+              <Link
+                to='/exercise/id'
+                id='exercise-card-link'
+                className='exercise-card-content'>More Info
+              </Link>
+              <button>Flip</button>
+            </footer>
+
           </div>
         </div>
-        <div className="exercise-card-content" id='exercise-preference'>
-          <h3>Exercise Preference</h3>
-          <div className="exercise-card-btn-box">
-            <button
-              name='downvote'
-              value='0'
-              onClick={(e) => this.handleClick(e)}
-              className='exercise-card-btn'
-              id='downvote'>Downvote
-            </button>
-            <h3>Neutral</h3>
-            <button
-              name='downvote'
-              value='0'
-              onClick={(e) => this.handleClick(e)}
-              className='exercise-card-btn'
-              id='downvote'>Downvote
-            </button>
-          </div>
-          <p>The buttons above increase or decrease the likeness this workout will appear again</p>
-        </div>
-        <footer className='exercise-card-footer'>
-          <button>Lock</button>
-          <Link
-            to='/exercise/id'
-            id='exercise-card-link'
-            className='exercise-card-content'>More Info</Link>
-          <button>Lock</button>
-        </footer>
       </article>
     )
   }

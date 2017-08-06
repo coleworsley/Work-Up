@@ -4,7 +4,10 @@ import { Link } from 'react-router-dom';
 import ExerciseCard from '../ExerciseCard/ExerciseCard'
 
 export const ExerciseList = () => {
-  const ExerciseCards = <ExerciseCard />
+  const ExerciseCards = []
+  for (let i = 0; i < 1; i++) {
+    ExerciseCards.push(<ExerciseCard/>)
+  }
 
   return (
     <section className='exercise-list-container'>
