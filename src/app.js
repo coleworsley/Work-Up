@@ -25,7 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
     noInfo: true,
     publicPath: config.output.publicPath
   }));
-}
+}``
 
 app.use('/assets', express.static(path.join(__dirname, '../app/assets')));
 

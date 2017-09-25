@@ -5,7 +5,7 @@ import ExerciseCard from '../ExerciseCard/ExerciseCard'
 
 export const ExerciseList = () => {
   const ExerciseCards = []
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 3; i++) {
     ExerciseCards.push(<ExerciseCard/>)
   }
 
