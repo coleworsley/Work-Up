@@ -1,10 +1,6 @@
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const db = require('knex')(configuration);
-const bookshelf = require('bookshelf')(db);
-
-
-
 
 
 function login(req, res) {
@@ -23,11 +19,11 @@ function login(req, res) {
     }
   })
   .catch((error) => {
-      response.status(500).json({
-        error: true,
-        data: {message: error.message}
-      })
-    })
+    res.status(500).json({
+      error: true,
+      data: {message: error.message}
+    });
+  });
 }
 
 function signup(req, res) {
