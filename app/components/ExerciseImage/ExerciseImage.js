@@ -11,7 +11,6 @@ export default class ExerciseImage extends Component {
     this.cycleThrough = this.cycleThrough.bind(this)
   }
 
-
   componentDidMount() {
     const interval = setInterval(this.cycleThrough, 2000);
     this.setState({interval})

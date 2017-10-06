@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { randomizeArr } from '../../constants';
 import ExerciseCardContainer from '../../containers/ExerciseCardContainer';
 import './WorkoutTab.css';
-import DetailViewContainer from '../../containers/DetailViewContainer'
+import DetailViewContainer from '../../containers/DetailViewContainer';
+import { WorkoutTabHeader } from '../WorkoutTabHeader/WorkoutTabHeader'
+import { ExerciseList } from '../ExerciseList/ExerciseList'
 
 export default class WorkoutTab extends Component {
   constructor() {
@@ -46,14 +48,14 @@ export default class WorkoutTab extends Component {
 
   handleChange(e) {
     const { name, value } = e.target;
-    const newValue = isNaN(parseInt(value)) ? value : parseInt(value)
+    const newValue = isNaN(parseInt(value)) ? value : parseInt(value);
 
-    this.setState({[name]: newValue})
+    this.setState({[name]: newValue});
   }
 
   randomize() {
     const { randomizeExercises, exercises: { all } } = this.props;
-    randomizeExercises(all, this.state.randomAmount)
+    randomizeExercises(all, this.state.randomAmount);
   }
 
   saveWorkout() {
@@ -80,60 +82,66 @@ export default class WorkoutTab extends Component {
 
     return (
       <main className='workout-tab'>
-        <section className='workout-build'>
-          <h1 className='workout-tab-title'>Build Workout</h1>
-          <div className="workout-titles">
-            <label htmlFor='workout'>
-              Workout Name:
-            </label>
-            <input
-              type="text"
-              name='workout'
-              value={workout}
-              placeholder='Enter a Workout Name'
-              onChange={(e) => this.handleChange(e)}
-            />
-          </div>
-          <div className="workout-btn-container">
-            <div className="randomize">
-              <button
-                className='workout-randomize-btn'
-                value={randomAmount}
-                onClick={this.randomize}>
-                Randomize
-              </button>
-              <label htmlFor="randomNumber">Exercise Count:
-                <input
-                  onChange={(e) => this.handleChange(e)}
-                  type="number"
-                  name='randomAmount'
-                  placeholder='exercises'
-                  value={randomAmount}
-                />
-              </label>
-            </div>
-            <div>
-              <button
-                className='toggle-detail-btn'
-                onClick={this.toggleDetail}>Show Detail
-              </button>
-              <button
-                className="save-workout-btn"
-                onClick={this.saveWorkout}>
-                Save Workout
-              </button>
-            </div>
-          </div>
-          <div className="exercise-container">
-            {this.buildExercises()}
-          </div>
-
-        </section>
-        <section className='workout-popular'>
-          <h1 className='workout-tab-title'>Exercise Detail</h1>
-          <DetailViewContainer />
-        </section>
+        <WorkoutTabHeader />
+        <ExerciseList />
       </main>
     )
   }
 }
+
+
+
+
+{/* <section className='workout-build'>
+  <h1 className='workout-tab-title'>Build Workout</h1>
+  <div className="workout-titles">
+    <label htmlFor='workout'>
+      Workout Name:
+    </label>
+    <input
+      type="text"
+      name='workout'
+      value={workout}
+      placeholder='Enter a Workout Name'
+      onChange={(e) => this.handleChange(e)}
+    />
+  </div>
+  <div className="workout-btn-container">
+    <div className="randomize">
+      <button
+        className='workout-randomize-btn'
+        value={randomAmount}
+        onClick={this.randomize}>
+        Randomize
+      </button>
+      <label htmlFor="randomNumber">Exercise Count:
+        <input
+          onChange={(e) => this.handleChange(e)}
+          type="number"
+          name='randomAmount'
+          placeholder='exercises'
+          value={randomAmount}
+        />
+      </label>
+    </div>
+    <div>
+      <button
+        className='toggle-detail-btn'
+        onClick={this.toggleDetail}>Show Detail
+      </button>
+      <button
+        className="save-workout-btn"
+        onClick={this.saveWorkout}>
+        Save Workout
+      </button>
+    </div>
+  </div>
+  <div className="exercise-container">
+    {this.buildExercises()}
+  </div>
+
+</section>
+<section className='workout-popular'>
+  <h1 className='workout-tab-title'>Exercise Detail</h1>
+  <DetailViewContainer />
+</section> */}
