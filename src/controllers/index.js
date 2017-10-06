@@ -3,6 +3,10 @@ const configuration = require('../knexfile')[environment];
 const db = require('knex')(configuration);
 const bookshelf = require('bookshelf')(db);
 
+
+
+
+
 function login(req, res) {
   db('users').where(req.body)
   .select('id', 'email', 'first_name', 'last_name')
